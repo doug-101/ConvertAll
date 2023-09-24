@@ -31,7 +31,7 @@ class UnitData {
   }
 
   /// Return all units with words staring with the given words.
-  List<UnitDatum?> partialMatches(String searchTerm) {
+  List<UnitDatum> partialMatches(String searchTerm) {
     final wordList = searchTerm.toLowerCase().split(' ');
     return List.of(unitList.where((unit) => unit.isPartialMatch(wordList)));
   }
@@ -72,6 +72,8 @@ class UnitDatum {
     if (equiv.isEmpty) throw UnitDataException('Invalid equivalent for $name');
     searchTerms.addAll(name.toLowerCase().split(' '));
   }
+
+  String get nameWithUnabbrev => unabbrev.isEmpty ? name : '$name ($unabbrev)';
 
   /// Return true if this unit's words match words from the wordlist.
   bool isPartialMatch(List<String> wordList) {

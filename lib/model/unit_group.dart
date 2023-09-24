@@ -7,8 +7,8 @@ import 'dart:convert' show json;
 import 'dart:math' as math;
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/expression.dart';
+import 'unit_controller.dart';
 import 'unit_data.dart';
-import '../main.dart' show unitController;
 
 /// Parent class for UnitGroup and UnitAtom.
 ///
@@ -127,7 +127,8 @@ class UnitGroup implements UnitItem {
   }
 
   /// Return the unit closest to the given position in the string.
-  UnitAtom unitAtPosition(int pos) {
+  UnitAtom? unitAtPosition(int pos) {
+    if (unitItems.isEmpty) return null;
     final text = toString();
     final proceedingText =
         text.substring(0, pos < text.length ? pos : text.length);
@@ -136,28 +137,41 @@ class UnitGroup implements UnitItem {
     return unitList[unitNum < unitList.length ? unitNum : unitList.length - 1];
   }
 
-  /// Swap the oldAtom with the newUnit and reset and cached reduced units.
-  bool replaceUnit(UnitAtom oldAtom, UnitDatum newUnit) {
+  /// Swap the oldAtom with the newUnit and reset cached reduced units.
+  ///
+  /// Return the new [Unitatom] if succesful.
+  UnitAtom? replaceUnit(UnitAtom? oldAtom, UnitDatum newUnit) {
     final newAtom = UnitAtom(
       unitMatch: newUnit,
-      unitExp: oldAtom.unitExp,
-      partialExp: oldAtom.partialExp,
+      unitExp: oldAtom?.unitExp ?? 1,
+      partialExp: oldAtom?.partialExp,
     );
-    final unitNum = unitItems.indexOf(oldAtom);
-    if (unitNum >= 0) {
-      unitItems[unitNum] = newAtom;
-      reducedGroup = null;
-      factor = 1.0;
-      return true;
-    }
-    for (var unit in unitItems) {
-      if (unit is UnitGroup) {
-        if (unit.replaceUnit(oldAtom, newUnit)) {
-          return true;
+    if (oldAtom == null) {
+      if (unitItems.isEmpty) {
+        unitItems.add(newAtom);
+        reducedGroup = null;
+        factor = 1.0;
+        return newAtom;
+      }
+    } else {
+      final unitNum = unitItems.indexOf(oldAtom);
+      if (unitNum >= 0) {
+        unitItems[unitNum] = newAtom;
+        reducedGroup = null;
+        factor = 1.0;
+        return newAtom;
+      } else {
+        for (var unit in unitItems) {
+          if (unit is UnitGroup) {
+            final subAtom = unit.replaceUnit(oldAtom, newUnit);
+            if (subAtom != null) {
+              return subAtom;
+            }
+          }
         }
       }
     }
-    return false;
+    return null;
   }
 
   /// Change the given unit's exponent and reset and cached reduced units.
@@ -338,7 +352,7 @@ class UnitAtom implements UnitItem {
       }
     }
     final unitText = parts[0].trim();
-    final unitData = unitController.unitData;
+    final unitData = UnitController.unitData;
     unitMatch = unitData.unitMatch(unitText);
     if (unitMatch == null) {
       if (unitText.endsWith('2') || unitText.endsWith('3')) {
