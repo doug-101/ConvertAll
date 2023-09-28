@@ -4,6 +4,7 @@
 // Free software, GPL v2 or later.
 
 // foundation.dart includes [ChangeNotifier].
+import 'package:eval_ex/expression.dart';
 import 'package:flutter/foundation.dart';
 import 'unit_data.dart';
 import 'unit_group.dart';
@@ -13,8 +14,12 @@ class UnitController extends ChangeNotifier {
   static final unitData = UnitData();
   final fromUnit = UnitGroup();
   final toUnit = UnitGroup();
+  var canConvert = false;
   UnitAtom? currentUnit;
   var fromEditorActive = true;
+  double? enteredValue = 1.0;
+  var fromValueEntered = true;
+  var statusString = '';
 
   /// Async method to load data and update the GUI.
   Future<void> loadData() async {
@@ -39,6 +44,22 @@ class UnitController extends ChangeNotifier {
     }
   }
 
+  /// Set [canConvert] based on whether the units are valid and compatible.
+  void updateUnitCalc() {
+    canConvert = false;
+    statusString = '';
+    if (fromUnit.isValid && toUnit.isValid) {
+      if (fromUnit.isCategoryMatch(toUnit)) {
+        canConvert = true;
+        statusString = 'Converting...';
+      } else {
+        statusString = 'Units are not compatible (${fromUnit.reducedGroup} '
+            'vs. ${toUnit.reducedGroup})';
+      }
+    }
+    notifyListeners();
+  }
+
   /// Set the current unit under the cursor and update the GUI.
   void updateCurrentUnit(UnitAtom? unit, bool isFrom) {
     if (unit != currentUnit) {
@@ -48,23 +69,36 @@ class UnitController extends ChangeNotifier {
     }
   }
 
-  /// Check that units are valid and compatible before doing value calculation.
-  void updateUnitCalc() {
-    if (fromUnit.isValid && toUnit.isValid) {
-      if (fromUnit.isCategoryMatch(toUnit)) {
-        updateValueCalc();
-        return;
+  /// Set the value to be converted and update the GUI.
+  void updateEnteredValue(String valueStr, bool isFrom) {
+    fromValueEntered = isFrom;
+    try {
+      final decimalValue = Expression(valueStr).eval();
+      if (decimalValue != null) {
+        enteredValue = decimalValue.toDouble();
+      } else {
+        enteredValue = null;
       }
-      print('${fromUnit.reducedGroup} is not compatible with '
-          '${toUnit.reducedGroup}');
+    } on ExpressionException {
+      enteredValue = null;
     }
     notifyListeners();
   }
 
-  /// Assume that the units are unchanged and do value calculation.
-  void updateValueCalc() {
-    print('2 from units = ${fromUnit.convert(2.0, toUnit)} to units');
-    notifyListeners();
+  /// Return the resulting converted value as a String.
+  String convertedValue() {
+    if (canConvert && enteredValue != null) {
+      double value;
+      if (fromValueEntered) {
+        value = fromUnit.convert(enteredValue!, toUnit);
+      } else {
+        value = toUnit.convert(enteredValue!, fromUnit);
+      }
+      // Round to <16 significant figures to mask floating point errors,
+      // then go back to a short string representation.
+      return double.parse(value.toStringAsPrecision(15)).toString();
+    }
+    return '';
   }
 
   /// Return a list of partial matches for the [currentUnit].

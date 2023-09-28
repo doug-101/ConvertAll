@@ -1,4 +1,4 @@
-// unit_text_editor.dart, provides a text edit widget to units.
+// unit_text_editor.dart, provides a text edit widget for units.
 // ConvertAll, a versatile unit conversion program.
 // Copyright (c) 2023, Douglas W. Bell.
 // Free software, GPL v2 or later.
@@ -43,6 +43,13 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
     });
   }
 
+  @override
+  void dispose() {
+    _editController.dispose();
+    _editorFocusNode.dispose();
+    super.dispose();
+  }
+
   /// Find unit at cursor after cursor or focus change.
   void checkCurrentUnit() {
     final startPos = _editController.selection.start;
@@ -56,13 +63,6 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
     }
     final model = Provider.of<UnitController>(context, listen: false);
     model.updateCurrentUnit(startUnit, widget.isFrom);
-  }
-
-  @override
-  void dispose() {
-    _editController.dispose();
-    _editorFocusNode.dispose();
-    super.dispose();
   }
 
   @override

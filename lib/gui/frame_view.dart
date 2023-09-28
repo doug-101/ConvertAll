@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
 import 'unit_table.dart';
 import 'unit_text_editor.dart';
+import 'unit_value_editor.dart';
 
 class FrameView extends StatefulWidget {
   FrameView({super.key});
@@ -62,6 +63,29 @@ class _FrameViewState extends State<FrameView> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: UnitTable(),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  runSpacing: 20,
+                  children: <Widget>[
+                    UnitValueEditor(
+                      isFrom: true,
+                    ),
+                    UnitValueEditor(
+                      isFrom: false,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Consumer<UnitController>(
+                  builder: (context, model, child) {
+                    return Text(model.statusString);
+                  },
                 ),
               ),
             ],
