@@ -20,6 +20,42 @@ class UnitValueEditor extends StatefulWidget {
 
 class _UnitValueEditorState extends State<UnitValueEditor> {
   final _editController = TextEditingController();
+  late final FocusNode _editorFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    final model = Provider.of<UnitController>(context, listen: false);
+    _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
+      if (event is KeyDownEvent) {
+        if (event.logicalKey == LogicalKeyboardKey.tab) {
+          // Catch tab key to do a select all in the next tab field.
+          model.tabPressFlag = true;
+        }
+      }
+      return KeyEventResult.ignored;
+    });
+    _editorFocusNode.addListener(() {
+      if (_editorFocusNode.hasFocus) {
+        if (model.tabPressFlag) {
+          _editController.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: _editController.text.length,
+          );
+          model.tabPressFlag = false;
+        }
+        // Disable active editor and active unit in model when this gets focus.
+        model.updateCurrentUnit(null, null);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _editController.dispose();
+    _editorFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +76,9 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
             children: <Widget>[
               TextField(
                 controller: _editController,
+                focusNode: _editorFocusNode,
+                // Avoid losing focus when clicking elsewhere.
+                onTapOutside: (event) {},
                 enabled: model.canConvert,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(

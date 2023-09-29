@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'unit_data.dart';
 import 'unit_group.dart';
 
+enum ActiveEditor { fromEdit, toEdit }
+
 /// The main model that stores unit data and conversion groups.
 class UnitController extends ChangeNotifier {
   static final unitData = UnitData();
@@ -16,10 +18,11 @@ class UnitController extends ChangeNotifier {
   final toUnit = UnitGroup();
   var canConvert = false;
   UnitAtom? currentUnit;
-  var fromEditorActive = true;
+  ActiveEditor? activeEditor;
   double? enteredValue = 1.0;
   var fromValueEntered = true;
   var statusString = '';
+  var tabPressFlag = false;
 
   /// Async method to load data and update the GUI.
   Future<void> loadData() async {
@@ -38,7 +41,8 @@ class UnitController extends ChangeNotifier {
   /// Replace the current unit in the active unit group.
   void replaceCurrentUnit(UnitDatum newUnit) {
     if (newUnit != currentUnit?.unitMatch) {
-      final currentGroup = fromEditorActive ? fromUnit : toUnit;
+      final currentGroup =
+          activeEditor == ActiveEditor.fromEdit ? fromUnit : toUnit;
       currentUnit = currentGroup.replaceUnit(currentUnit, newUnit);
       updateUnitCalc();
     }
@@ -61,10 +65,10 @@ class UnitController extends ChangeNotifier {
   }
 
   /// Set the current unit under the cursor and update the GUI.
-  void updateCurrentUnit(UnitAtom? unit, bool isFrom) {
-    if (unit != currentUnit) {
+  void updateCurrentUnit(UnitAtom? unit, ActiveEditor? newActiveEditor) {
+    if (unit != currentUnit || newActiveEditor != activeEditor) {
       currentUnit = unit;
-      fromEditorActive = isFrom;
+      activeEditor = newActiveEditor;
       notifyListeners();
     }
   }

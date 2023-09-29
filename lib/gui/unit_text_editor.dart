@@ -5,6 +5,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
 import '../model/unit_group.dart';
@@ -27,6 +28,7 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
   @override
   void initState() {
     super.initState();
+    final model = Provider.of<UnitController>(context, listen: false);
     _editController.addListener(() {
       final newText = _editController.text;
       // Update cursor position if text hasn't changed.
@@ -35,9 +37,24 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
         checkCurrentUnit();
       }
     });
-    _editorFocusNode = FocusNode();
+    _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
+      if (event is KeyDownEvent) {
+        if (event.logicalKey == LogicalKeyboardKey.tab) {
+          // Catch tab key to do a select all in the next tab field.
+          model.tabPressFlag = true;
+        }
+      }
+      return KeyEventResult.ignored;
+    });
     _editorFocusNode.addListener(() {
       if (_editorFocusNode.hasFocus) {
+        if (model.tabPressFlag) {
+          _editController.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: _editController.text.length,
+          );
+          model.tabPressFlag = false;
+        }
         checkCurrentUnit();
       }
     });
@@ -62,7 +79,10 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
       }
     }
     final model = Provider.of<UnitController>(context, listen: false);
-    model.updateCurrentUnit(startUnit, widget.isFrom);
+    model.updateCurrentUnit(
+      startUnit,
+      widget.isFrom ? ActiveEditor.fromEdit : ActiveEditor.toEdit,
+    );
   }
 
   @override
@@ -86,6 +106,9 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
           return TextField(
             controller: _editController,
             focusNode: _editorFocusNode,
+            autofocus: widget.isFrom,
+            // Avoid losing focus when clicking on unit table or elsewhere.
+            onTapOutside: (event) {},
             onChanged: (String newText) {
               // Compare with spaces removed to allow backspace to remove
               // extra space.
