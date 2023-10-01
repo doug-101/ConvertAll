@@ -39,10 +39,28 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
     });
     _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
       if (event is KeyDownEvent) {
-        if (event.logicalKey == LogicalKeyboardKey.tab) {
-          // Catch tab key to do a select all in the next tab field.
-          model.tabPressFlag = true;
+        switch (event.logicalKey) {
+          case LogicalKeyboardKey.tab:
+            // Catch tab key to do a select-all in the next tab field.
+            model.tabPressFlag = true;
+            return KeyEventResult.ignored;
+          case LogicalKeyboardKey.arrowDown:
+            model.moveHighlightByOne(down: true);
+          case LogicalKeyboardKey.arrowUp:
+            model.moveHighlightByOne(down: false);
+          case LogicalKeyboardKey.pageDown:
+            model.moveHighlightByPage(down: true);
+          case LogicalKeyboardKey.pageUp:
+            model.moveHighlightByPage(down: false);
+          case LogicalKeyboardKey.enter:
+          case LogicalKeyboardKey.numpadEnter:
+            if (model.highlightedTableUnit != null) {
+              model.replaceCurrentUnit(model.highlightedTableUnit!);
+            }
+          default:
+            return KeyEventResult.ignored;
         }
+        return KeyEventResult.handled;
       }
       return KeyEventResult.ignored;
     });

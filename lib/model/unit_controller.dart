@@ -4,6 +4,7 @@
 // Free software, GPL v2 or later.
 
 // foundation.dart includes [ChangeNotifier].
+import 'dart:math';
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/foundation.dart';
 import 'unit_data.dart';
@@ -18,11 +19,13 @@ class UnitController extends ChangeNotifier {
   final toUnit = UnitGroup();
   var canConvert = false;
   UnitAtom? currentUnit;
+  UnitDatum? highlightedTableUnit;
   ActiveEditor? activeEditor;
   double? enteredValue = 1.0;
   var fromValueEntered = true;
   var statusString = '';
   var tabPressFlag = false;
+  var tableRowHeight = 5;
 
   /// Async method to load data and update the GUI.
   Future<void> loadData() async {
@@ -35,6 +38,7 @@ class UnitController extends ChangeNotifier {
     unit.parse(newtext);
     final cursorPos = unit.toString().length - cursorPosFromEnd;
     currentUnit = unit.unitAtPosition(cursorPos);
+    highlightedTableUnit = null;
     updateUnitCalc();
   }
 
@@ -44,8 +48,15 @@ class UnitController extends ChangeNotifier {
       final currentGroup =
           activeEditor == ActiveEditor.fromEdit ? fromUnit : toUnit;
       currentUnit = currentGroup.replaceUnit(currentUnit, newUnit);
+      highlightedTableUnit = null;
       updateUnitCalc();
     }
+  }
+
+  /// Change the active table unit (potentially selected unit).
+  void updateHighlightedTableUnit(UnitDatum newUnit) {
+    highlightedTableUnit = newUnit;
+    notifyListeners();
   }
 
   /// Set [canConvert] based on whether the units are valid and compatible.
@@ -68,6 +79,7 @@ class UnitController extends ChangeNotifier {
   void updateCurrentUnit(UnitAtom? unit, ActiveEditor? newActiveEditor) {
     if (unit != currentUnit || newActiveEditor != activeEditor) {
       currentUnit = unit;
+      highlightedTableUnit = null;
       activeEditor = newActiveEditor;
       notifyListeners();
     }
@@ -108,9 +120,59 @@ class UnitController extends ChangeNotifier {
   /// Return a list of partial matches for the [currentUnit].
   ///
   /// Return null if there is no current unit.
+  /// Set [highlightedTableUnit] to first one if it is not already set.
   List<UnitDatum>? currentPartialMatches() {
-    if (currentUnit == null) return null;
+    if (currentUnit == null) {
+      if (highlightedTableUnit == null &&
+          UnitController.unitData.unitList.isNotEmpty) {
+        highlightedTableUnit = UnitController.unitData.unitList.first;
+      }
+      return null;
+    }
     final searchText = currentUnit!.unitMatch?.name ?? currentUnit!.unitName!;
-    return unitData.partialMatches(searchText);
+    final results = unitData.partialMatches(searchText);
+    if (currentUnit!.unitMatch == null &&
+        highlightedTableUnit == null &&
+        results.isNotEmpty) {
+      highlightedTableUnit = results.first;
+    }
+    return results;
+  }
+
+  /// Move [highlightedTableUnit] up or down by one space in table results.
+  void moveHighlightByOne({bool down = true}) {
+    final unitList = currentUnit == null
+        ? UnitController.unitData.unitList
+        : currentPartialMatches()!;
+    final oldUnit = highlightedTableUnit ?? currentUnit?.unitMatch;
+    if (unitList.length > 1 && oldUnit != null) {
+      final pos = unitList.indexOf(oldUnit);
+      if (down && pos >= 0 && pos < unitList.length - 1) {
+        highlightedTableUnit = unitList[pos + 1];
+        notifyListeners();
+      } else if (!down && pos >= 1) {
+        highlightedTableUnit = unitList[pos - 1];
+        notifyListeners();
+      }
+    }
+  }
+
+  /// Move [highlightedTableUnit] up or down by one page in table results.
+  void moveHighlightByPage({bool down = true}) {
+    final unitList = currentUnit == null
+        ? UnitController.unitData.unitList
+        : currentPartialMatches()!;
+    final oldUnit = highlightedTableUnit ?? currentUnit?.unitMatch;
+    if (unitList.length > 1 && oldUnit != null) {
+      var pos = unitList.indexOf(oldUnit);
+      if (down && pos >= 0 && pos < unitList.length - 1) {
+        highlightedTableUnit =
+            unitList[min(pos + tableRowHeight, unitList.length - 1)];
+        notifyListeners();
+      } else if (!down && pos >= 1) {
+        highlightedTableUnit = unitList[max(pos - tableRowHeight, 0)];
+        notifyListeners();
+      }
+    }
   }
 }

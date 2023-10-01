@@ -9,6 +9,9 @@ import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
 import '../model/unit_group.dart';
 
+const headerHeight = 40.0;
+const lineHeight = 30.0;
+
 class UnitTable extends StatefulWidget {
   UnitTable({super.key});
 
@@ -19,7 +22,6 @@ class UnitTable extends StatefulWidget {
 class _UnitTableState extends State<UnitTable> {
   final _vertScrollCtrl = ScrollController();
   final _horziScrollCtrl = ScrollController();
-  var lineHeight = 30.0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,23 @@ class _UnitTableState extends State<UnitTable> {
       builder: (context, model, child) {
         final unitList =
             model.currentPartialMatches() ?? UnitController.unitData.unitList;
+        if (_vertScrollCtrl.hasClients) {
+          final viewHeight =
+              _vertScrollCtrl.position.viewportDimension - headerHeight;
+          model.tableRowHeight = (viewHeight / lineHeight).floor();
+          final visibleUnit =
+              model.highlightedTableUnit ?? model.currentUnit?.unitMatch;
+          if (visibleUnit != null) {
+            final pos = unitList.indexOf(visibleUnit) * lineHeight;
+            if (pos >= 0 && pos < _vertScrollCtrl.offset) {
+              // Need to scroll up.
+              _vertScrollCtrl.jumpTo(pos);
+            } else if (pos > _vertScrollCtrl.offset + viewHeight) {
+              // Need to scroll down.
+              _vertScrollCtrl.jumpTo(pos - viewHeight + lineHeight);
+            }
+          }
+        }
         return Scrollbar(
           controller: _horziScrollCtrl,
           thumbVisibility: true,
@@ -56,12 +75,18 @@ class _UnitTableState extends State<UnitTable> {
                           final unit = unitList[index];
                           final isSelected =
                               unit == model.currentUnit?.unitMatch;
+                          final isActive = unit == model.highlightedTableUnit;
                           final textStyle = isSelected
                               ? TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
                                 )
-                              : null;
+                              : isActive
+                                  ? TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    )
+                                  : null;
                           return GestureDetector(
                             onTap: () {
                               model.replaceCurrentUnit(unit);
@@ -125,10 +150,10 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
   final height = 40.0;
 
   @override
-  double get maxExtent => height;
+  double get maxExtent => headerHeight;
 
   @override
-  double get minExtent => height;
+  double get minExtent => headerHeight;
 
   @override
   bool shouldRebuild(UnitTableHeader oldDelegate) => false;
@@ -146,7 +171,7 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
         children: <Widget>[
           SizedBox(
             width: 280.0,
-            height: height,
+            height: headerHeight,
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text('Unit Name', style: textStyle),
@@ -154,7 +179,7 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
           ),
           SizedBox(
             width: 150.0,
-            height: height,
+            height: headerHeight,
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text('Unit Type', style: textStyle),
@@ -162,7 +187,7 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
           ),
           SizedBox(
             width: 280.0,
-            height: height,
+            height: headerHeight,
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text('Comments', style: textStyle),
