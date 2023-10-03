@@ -56,6 +56,7 @@ class _RootApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: FrameView(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

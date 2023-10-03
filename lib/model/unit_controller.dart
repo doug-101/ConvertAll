@@ -15,6 +15,7 @@ enum ActiveEditor { fromEdit, toEdit }
 /// The main model that stores unit data and conversion groups.
 class UnitController extends ChangeNotifier {
   static final unitData = UnitData();
+  final sortParam = UnitSortParam();
   final fromUnit = UnitGroup();
   final toUnit = UnitGroup();
   var canConvert = false;
@@ -30,6 +31,15 @@ class UnitController extends ChangeNotifier {
   /// Async method to load data and update the GUI.
   Future<void> loadData() async {
     await unitData.loadData();
+    sortParam.unitStableSort(unitData.unitList);
+    notifyListeners();
+  }
+
+  /// Adjust sorting parameters based on a tap on a header.
+  void handleHeaderTap(SortField field) {
+    sortParam.chnageSortField(field);
+    sortParam.unitStableSort(unitData.unitList);
+    highlightedTableUnit = null;
     notifyListeners();
   }
 

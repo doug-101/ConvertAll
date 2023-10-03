@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
+import '../model/unit_data.dart';
 import '../model/unit_group.dart';
 
 const headerHeight = 40.0;
@@ -163,38 +164,66 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final textStyle =
         TextStyle(color: Theme.of(context).colorScheme.onSecondary);
-    return Container(
-      color: Theme.of(context).colorScheme.secondary,
-      alignment: Alignment.center,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            width: 280.0,
-            height: headerHeight,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Unit Name', style: textStyle),
-            ),
+    return Consumer<UnitController>(
+      builder: (context, model, child) {
+        return Container(
+          color: Theme.of(context).colorScheme.secondary,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  model.handleHeaderTap(SortField.byName);
+                },
+                child: SizedBox(
+                  width: 280.0,
+                  height: headerHeight,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      model.sortParam.headerTitle(SortField.byName),
+                      style: textStyle,
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  model.handleHeaderTap(SortField.byType);
+                },
+                child: SizedBox(
+                  width: 150.0,
+                  height: headerHeight,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      model.sortParam.headerTitle(SortField.byType),
+                      style: textStyle,
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  model.handleHeaderTap(SortField.byComment);
+                },
+                child: SizedBox(
+                  width: 280.0,
+                  height: headerHeight,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      model.sortParam.headerTitle(SortField.byComment),
+                      style: textStyle,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 150.0,
-            height: headerHeight,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Unit Type', style: textStyle),
-            ),
-          ),
-          SizedBox(
-            width: 280.0,
-            height: headerHeight,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Comments', style: textStyle),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

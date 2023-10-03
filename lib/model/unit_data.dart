@@ -7,6 +7,8 @@ import 'dart:convert' show json;
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+enum SortField { byName, byType, byComment }
+
 /// Handles the stored database of unit data.
 class UnitData {
   // The list allows the list to be sorted based on user criteria.
@@ -83,6 +85,73 @@ class UnitDatum {
       }
     }
     return false;
+  }
+
+  String sortKey(SortField field) {
+    switch (field) {
+      case SortField.byName:
+        return name.toLowerCase();
+      case SortField.byType:
+        return type.toLowerCase();
+      case SortField.byComment:
+        return comment.toLowerCase();
+    }
+  }
+}
+
+/// Class to handle sort fields and sort directions for unit data.
+class UnitSortParam {
+  var sortField = SortField.byName;
+  var sortForward = true;
+
+  /// Return a string for the column header title with sort char.
+  String headerTitle(SortField field) {
+    var directionChar = '';
+    if (field == sortField) {
+      directionChar = sortForward ? '  \u25BC' : '  \u25B2';
+    }
+    switch (field) {
+      case SortField.byName:
+        return 'Unit Name$directionChar';
+      case SortField.byType:
+        return 'Unit Type$directionChar';
+      case SortField.byComment:
+        return 'Comments$directionChar';
+    }
+  }
+
+  /// Adjust sorting parameters based on a tap on a header.
+  void chnageSortField(SortField newField) {
+    if (newField == sortField) {
+      sortForward = !sortForward;
+    } else {
+      sortField = newField;
+      sortForward = true;
+    }
+  }
+
+  /// A stable insertion sort for a unit list.
+  void unitStableSort(List<UnitDatum> units) {
+    final start = 0;
+    final end = units.length;
+    for (var pos = start + 1; pos < end; pos++) {
+      var min = start;
+      var max = pos;
+      var unit = units[pos];
+      while (min < max) {
+        final mid = min + ((max - min) >> 1);
+        var comparison =
+            unit.sortKey(sortField).compareTo(units[mid].sortKey(sortField));
+        if (!sortForward) comparison = -comparison;
+        if (comparison < 0) {
+          max = mid;
+        } else {
+          min = mid + 1;
+        }
+      }
+      units.setRange(min + 1, pos + 1, units, min);
+      units[min] = unit;
+    }
   }
 }
 
