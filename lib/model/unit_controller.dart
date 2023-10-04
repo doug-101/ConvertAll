@@ -63,12 +63,6 @@ class UnitController extends ChangeNotifier {
     }
   }
 
-  /// Change the active table unit (potentially selected unit).
-  void updateHighlightedTableUnit(UnitDatum newUnit) {
-    highlightedTableUnit = newUnit;
-    notifyListeners();
-  }
-
   /// Set [canConvert] based on whether the units are valid and compatible.
   void updateUnitCalc() {
     canConvert = false;
@@ -129,18 +123,19 @@ class UnitController extends ChangeNotifier {
 
   /// Return a list of partial matches for the [currentUnit].
   ///
-  /// Return null if there is no current unit.
+  /// Return full or filtered unit list if there is no current unit.
   /// Set [highlightedTableUnit] to first one if it is not already set.
-  List<UnitDatum>? currentPartialMatches() {
+  List<UnitDatum> currentPartialMatches() {
     if (currentUnit == null) {
       if (highlightedTableUnit == null &&
           UnitController.unitData.unitList.isNotEmpty) {
-        highlightedTableUnit = UnitController.unitData.unitList.first;
+        highlightedTableUnit =
+            UnitController.unitData.filteredOrFullUnits.first;
       }
-      return null;
+      return UnitController.unitData.filteredOrFullUnits;
     }
     final searchText = currentUnit!.unitMatch?.name ?? currentUnit!.unitName!;
-    final results = unitData.partialMatches(searchText);
+    final results = unitData.partialMatches(searchText, canFilter: true);
     if (currentUnit!.unitMatch == null &&
         highlightedTableUnit == null &&
         results.isNotEmpty) {
@@ -151,9 +146,7 @@ class UnitController extends ChangeNotifier {
 
   /// Move [highlightedTableUnit] up or down by one space in table results.
   void moveHighlightByOne({bool down = true}) {
-    final unitList = currentUnit == null
-        ? UnitController.unitData.unitList
-        : currentPartialMatches()!;
+    final unitList = currentPartialMatches();
     final oldUnit = highlightedTableUnit ?? currentUnit?.unitMatch;
     if (unitList.length > 1 && oldUnit != null) {
       final pos = unitList.indexOf(oldUnit);
@@ -169,9 +162,7 @@ class UnitController extends ChangeNotifier {
 
   /// Move [highlightedTableUnit] up or down by one page in table results.
   void moveHighlightByPage({bool down = true}) {
-    final unitList = currentUnit == null
-        ? UnitController.unitData.unitList
-        : currentPartialMatches()!;
+    final unitList = currentPartialMatches();
     final oldUnit = highlightedTableUnit ?? currentUnit?.unitMatch;
     if (unitList.length > 1 && oldUnit != null) {
       var pos = unitList.indexOf(oldUnit);
@@ -184,5 +175,19 @@ class UnitController extends ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  bool get isFilteringUnitData => UnitController.unitData.isFiltering;
+
+  /// start filtering for given type name.
+  void filterUnitData(String typeName) {
+    UnitController.unitData.filterUnits(typeName);
+    notifyListeners();
+  }
+  
+  /// Stop filering by unit type.
+  void endFilterUnitData() {
+    UnitController.unitData.endFilter();
+    notifyListeners();
   }
 }

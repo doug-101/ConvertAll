@@ -17,14 +17,30 @@ class UnitData {
   // The map uses lower-case unit names with no spaces as keys.
   final unitMap = <String, UnitDatum>{};
 
+  // Full list of unit types for filtering.
+  final typeList = <String>[];
+
+  // List of filtered units if filtering is active.
+  final filteredUnits = <UnitDatum>[];
+
+  bool get isFiltering => filteredUnits.isNotEmpty;
+
+  List<UnitDatum> get filteredOrFullUnits {
+    return filteredUnits.isNotEmpty ? filteredUnits : unitList;
+  }
+
   Future<void> loadData() async {
+    final typeSet = <String>{};
     final List<dynamic> dataList =
         json.decode(await rootBundle.loadString('assets/units.json'));
     for (var item in dataList) {
       final unit = UnitDatum(item);
       unitList.add(unit);
       unitMap[unit.name.toLowerCase().replaceAll(' ', '')] = unit;
+      typeSet.add(unit.type);
     }
+    typeList.addAll(typeSet);
+    typeList.sort();
   }
 
   /// Return an exact match for the given unit name.
@@ -33,9 +49,22 @@ class UnitData {
   }
 
   /// Return all units with words staring with the given words.
-  List<UnitDatum> partialMatches(String searchTerm) {
+  List<UnitDatum> partialMatches(String searchTerm, {bool canFilter = false}) {
     final wordList = searchTerm.toLowerCase().split(' ');
-    return List.of(unitList.where((unit) => unit.isPartialMatch(wordList)));
+    final availUnits =
+        (canFilter && filteredUnits.isNotEmpty) ? filteredUnits : unitList;
+    return List.of(availUnits.where((unit) => unit.isPartialMatch(wordList)));
+  }
+
+  /// start filtering for given type name.
+  void filterUnits(String typeName) {
+    filteredUnits.clear();
+    filteredUnits.addAll(unitList.where((unit) => unit.type == typeName));
+  }
+
+  /// Stop filering by unit type.
+  void endFilter() {
+    filteredUnits.clear();
   }
 }
 

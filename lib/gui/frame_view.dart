@@ -36,6 +36,39 @@ class _FrameViewState extends State<FrameView> {
           style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        actions: <Widget>[
+          if (!model.isFilteringUnitData)
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.filter_alt,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+              tooltip: 'Filter units by type',
+              onSelected: (result) {
+                model.filterUnitData(result);
+                setState(() {});
+              },
+              itemBuilder: (context) => [
+                for (var type in UnitController.unitData.typeList)
+                  PopupMenuItem<String>(
+                    child: Text(type),
+                    value: type,
+                  ),
+              ],
+            ),
+          if (model.isFilteringUnitData)
+            IconButton(
+              icon: Icon(
+                Icons.filter_alt_off,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+              tooltip: 'Stop filering',
+              onPressed: () {
+                model.endFilterUnitData();
+                setState(() {});
+              },
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),

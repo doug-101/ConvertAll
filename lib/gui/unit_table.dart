@@ -28,8 +28,7 @@ class _UnitTableState extends State<UnitTable> {
   Widget build(BuildContext context) {
     return Consumer<UnitController>(
       builder: (context, model, child) {
-        final unitList =
-            model.currentPartialMatches() ?? UnitController.unitData.unitList;
+        final unitList = model.currentPartialMatches();
         if (_vertScrollCtrl.hasClients) {
           final viewHeight =
               _vertScrollCtrl.position.viewportDimension - headerHeight;
