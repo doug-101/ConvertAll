@@ -96,11 +96,14 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
         startUnit = null;
       }
     }
-    final model = Provider.of<UnitController>(context, listen: false);
-    model.updateCurrentUnit(
-      startUnit,
-      widget.isFrom ? ActiveEditor.fromEdit : ActiveEditor.toEdit,
-    );
+    // Use callback to prevent error from doing this update duraing a build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final model = Provider.of<UnitController>(context, listen: false);
+      model.updateCurrentUnit(
+        startUnit,
+        widget.isFrom ? ActiveEditor.fromEdit : ActiveEditor.toEdit,
+      );
+    });
   }
 
   @override

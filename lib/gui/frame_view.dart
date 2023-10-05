@@ -28,103 +28,143 @@ class _FrameViewState extends State<FrameView> {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<UnitController>(context, listen: false);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'ConvertAll',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        actions: <Widget>[
-          if (!model.isFilteringUnitData)
-            PopupMenuButton<String>(
-              icon: Icon(
-                Icons.filter_alt,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-              tooltip: 'Filter units by type',
-              onSelected: (result) {
-                model.filterUnitData(result);
-                setState(() {});
-              },
-              itemBuilder: (context) => [
-                for (var type in UnitController.unitData.typeList)
-                  PopupMenuItem<String>(
-                    child: Text(type),
-                    value: type,
+    // Size placeholder for hidden icons, includes 8/side padding.
+    final iconSize = (IconTheme.of(context).size ?? 24.0) + 16.0;
+    return Consumer<UnitController>(
+      builder: (context, model, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'ConvertAll',
+              style:
+                  TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            actions: <Widget>[
+              if (!model.isFilteringUnitData) ...[
+                Focus(
+                  // Avoid tab giving focus to this menu.
+                  descendantsAreFocusable: false,
+                  canRequestFocus: false,
+                  descendantsAreTraversable: false,
+                  child: PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.filter_alt,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                    tooltip: 'Filter units by type',
+                    onSelected: (result) {
+                      model.filterUnitData(result);
+                    },
+                    itemBuilder: (context) => [
+                      for (var type in UnitController.unitData.typeList)
+                        PopupMenuItem<String>(
+                          child: Text(type),
+                          value: type,
+                        ),
+                    ],
                   ),
-              ],
-            ),
-          if (model.isFilteringUnitData)
-            IconButton(
-              icon: Icon(
-                Icons.filter_alt_off,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-              tooltip: 'Stop filering',
-              onPressed: () {
-                model.endFilterUnitData();
-                setState(() {});
-              },
-            ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  alignment: WrapAlignment.spaceAround,
-                  runSpacing: 20,
-                  children: <Widget>[
-                    UnitTextEditor(
-                      unitGroup: model.fromUnit,
-                      isFrom: true,
-                    ),
-                    UnitTextEditor(
-                      unitGroup: model.toUnit,
-                      isFrom: false,
-                    ),
-                  ],
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: UnitTable(),
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  alignment: WrapAlignment.spaceAround,
-                  runSpacing: 20,
-                  children: <Widget>[
-                    UnitValueEditor(
-                      isFrom: true,
-                    ),
-                    UnitValueEditor(
-                      isFrom: false,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Consumer<UnitController>(
-                  builder: (context, model, child) {
-                    return Text(model.statusString);
+              ] else ...[
+                IconButton(
+                  icon: Icon(
+                    Icons.filter_alt_off,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                  tooltip: 'Stop filtering',
+                  focusNode: FocusNode(skipTraversal: true),
+                  onPressed: () {
+                    model.endFilterUnitData();
                   },
                 ),
-              ),
+              ],
+              if (model.recentUnits.isNotEmpty &&
+                  model.activeEditor != null) ...[
+                Focus(
+                  // Avoid tab giving focus to this menu.
+                  descendantsAreFocusable: false,
+                  canRequestFocus: false,
+                  descendantsAreTraversable: false,
+                  child: PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.watch_later,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                    tooltip: 'Recently used units',
+                    onSelected: (result) {
+                      model.replaceCurrentGroup(result);
+                    },
+                    itemBuilder: (context) => [
+                      for (var unitText in model.recentUnits)
+                        PopupMenuItem<String>(
+                          child: Text(unitText),
+                          value: unitText,
+                        )
+                    ],
+                  ),
+                ),
+              ] else ...[
+                // Reserve space for hidden recent icon if not present.
+                SizedBox(
+                  width: iconSize,
+                  height: 1.0,
+                ),
+              ],
             ],
           ),
-        ),
-      ),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    child: Wrap(
+                      alignment: WrapAlignment.spaceAround,
+                      runSpacing: 20,
+                      children: <Widget>[
+                        UnitTextEditor(
+                          unitGroup: model.fromUnit,
+                          isFrom: true,
+                        ),
+                        UnitTextEditor(
+                          unitGroup: model.toUnit,
+                          isFrom: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: UnitTable(),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Wrap(
+                      alignment: WrapAlignment.spaceAround,
+                      runSpacing: 20,
+                      children: <Widget>[
+                        UnitValueEditor(
+                          isFrom: true,
+                        ),
+                        UnitValueEditor(
+                          isFrom: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(model.statusString),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

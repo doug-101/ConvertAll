@@ -7,6 +7,7 @@
 import 'dart:math';
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/foundation.dart';
+import '../main.dart' show prefs;
 import 'unit_data.dart';
 import 'unit_group.dart';
 
@@ -19,6 +20,7 @@ class UnitController extends ChangeNotifier {
   final fromUnit = UnitGroup();
   final toUnit = UnitGroup();
   var canConvert = false;
+  final recentUnits = <String>[];
   UnitAtom? currentUnit;
   UnitDatum? highlightedTableUnit;
   ActiveEditor? activeEditor;
@@ -32,6 +34,7 @@ class UnitController extends ChangeNotifier {
   Future<void> loadData() async {
     await unitData.loadData();
     sortParam.unitStableSort(unitData.unitList);
+    recentUnits.addAll(prefs.getStringList('recents') ?? <String>[]);
     notifyListeners();
   }
 
@@ -63,6 +66,15 @@ class UnitController extends ChangeNotifier {
     }
   }
 
+  /// Replace the current unit group with the provided text.
+  void replaceCurrentGroup(String unitText) {
+    final currentGroup =
+        activeEditor == ActiveEditor.fromEdit ? fromUnit : toUnit;
+    currentGroup.parse(unitText);
+    highlightedTableUnit = null;
+    updateUnitCalc();
+  }
+
   /// Set [canConvert] based on whether the units are valid and compatible.
   void updateUnitCalc() {
     canConvert = false;
@@ -71,12 +83,24 @@ class UnitController extends ChangeNotifier {
       if (fromUnit.isCategoryMatch(toUnit)) {
         canConvert = true;
         statusString = 'Converting...';
+        addRecentUnits(toUnit.toString());
+        addRecentUnits(fromUnit.toString());
       } else {
         statusString = 'Units are not compatible (${fromUnit.reducedGroup} '
             'vs. ${toUnit.reducedGroup})';
       }
     }
     notifyListeners();
+  }
+
+  void addRecentUnits(String unitText) async {
+    recentUnits.remove(unitText);
+    recentUnits.insert(0, unitText);
+    final maxLength = prefs.getInt('max_recents') ?? 10;
+    if (recentUnits.length > maxLength) {
+      recentUnits.removeRange(maxLength, recentUnits.length);
+    }
+    prefs.setStringList('recents', recentUnits);
   }
 
   /// Set the current unit under the cursor and update the GUI.
@@ -184,7 +208,7 @@ class UnitController extends ChangeNotifier {
     UnitController.unitData.filterUnits(typeName);
     notifyListeners();
   }
-  
+
   /// Stop filering by unit type.
   void endFilterUnitData() {
     UnitController.unitData.endFilter();
