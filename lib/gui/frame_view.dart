@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../main.dart' show prefs;
 import '../model/unit_controller.dart';
+import 'bases_view.dart';
 import 'help_view.dart';
 import 'unit_table.dart';
 import 'unit_text_editor.dart';
@@ -71,6 +72,12 @@ class _FrameViewState extends State<FrameView> {
                     title: const Text('Bases'),
                     onTap: () async {
                       Navigator.pop(context);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BasesView(),
+                        ),
+                      );
                     }),
                 ListTile(
                     leading: const Icon(Icons.pie_chart),
@@ -137,11 +144,7 @@ class _FrameViewState extends State<FrameView> {
             ),
           ),
           appBar: AppBar(
-            title: Text(
-              'ConvertAll',
-              style:
-                  TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-            ),
+            title: const Text('ConvertAll'),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             foregroundColor: Theme.of(context).colorScheme.onSecondary,
             actions: <Widget>[
