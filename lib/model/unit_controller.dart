@@ -118,12 +118,10 @@ class UnitController extends ChangeNotifier {
     fromValueEntered = isFrom;
     try {
       final decimalValue = Expression(valueStr).eval();
-      if (decimalValue != null) {
-        enteredValue = decimalValue.toDouble();
-      } else {
-        enteredValue = null;
-      }
+      enteredValue = decimalValue?.toDouble();
     } on ExpressionException {
+      enteredValue = null;
+    } on FormatException {
       enteredValue = null;
     }
     notifyListeners();

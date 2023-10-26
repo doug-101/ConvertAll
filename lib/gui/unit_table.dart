@@ -66,7 +66,7 @@ class _UnitTableState extends State<UnitTable> {
                     SliverPersistentHeader(
                       pinned: true,
                       floating: false,
-                      delegate: UnitTableHeader(),
+                      delegate: _UnitTableHeader(),
                     ),
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
@@ -146,9 +146,7 @@ class _UnitTableState extends State<UnitTable> {
   }
 }
 
-class UnitTableHeader extends SliverPersistentHeaderDelegate {
-  final height = 40.0;
-
+class _UnitTableHeader extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => headerHeight;
 
@@ -156,7 +154,7 @@ class UnitTableHeader extends SliverPersistentHeaderDelegate {
   double get minExtent => headerHeight;
 
   @override
-  bool shouldRebuild(UnitTableHeader oldDelegate) => false;
+  bool shouldRebuild(_UnitTableHeader oldDelegate) => false;
 
   @override
   Widget build(

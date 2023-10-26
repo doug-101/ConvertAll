@@ -26,11 +26,13 @@ class UnitGroup implements UnitItem {
   double factor = 1.0;
   bool parenthClosed = true;
 
-  void parse(String groupString) {
-    unitItems.clear();
-    reducedGroup = null;
-    factor = 1.0;
-    parenthClosed = true;
+  void parse(String groupString, {claerFirst = true}) {
+    if (claerFirst) {
+      unitItems.clear();
+      reducedGroup = null;
+      factor = 1.0;
+      parenthClosed = true;
+    }
     var startPos = 0;
     var negativeExp = false;
     // Use non-greedy regex for multiple independent parenthesis,
@@ -43,14 +45,15 @@ class UnitGroup implements UnitItem {
       var match = matches.removeAt(0);
       var matchText = match[0]!;
       if (matchText.startsWith('(')) {
+        final subgroup = UnitGroup();
         if (matchText.endsWith(')')) {
           matchText = matchText.substring(1, matchText.length - 1).trim();
         } else {
           matchText = matchText.substring(1).trim();
-          parenthClosed = false;
+          subgroup.parenthClosed = false;
         }
-        final subgroup = UnitGroup();
-        subgroup.parse(matchText);
+        // Don't clear in order to preserve parenthesis flag.
+        subgroup.parse(matchText, claerFirst: false);
         unitItems.add(subgroup);
         if (negativeExp) {
           for (var unit in subgroup._flatUnitList()) {

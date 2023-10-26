@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import '../main.dart' show prefs;
 import '../model/unit_controller.dart';
 import 'bases_view.dart';
+import 'fractions_view.dart';
 import 'help_view.dart';
 import 'unit_table.dart';
 import 'unit_text_editor.dart';
@@ -24,6 +25,9 @@ class FrameView extends StatefulWidget {
 }
 
 class _FrameViewState extends State<FrameView> {
+  // Key is used to avoid focusing open drawer icon.
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +42,7 @@ class _FrameViewState extends State<FrameView> {
     return Consumer<UnitController>(
       builder: (context, model, child) {
         return Scaffold(
+          key: _scaffoldKey,
           drawer: Drawer(
             child: ListView(
               children: <Widget>[
@@ -84,6 +89,12 @@ class _FrameViewState extends State<FrameView> {
                     title: const Text('Fractions'),
                     onTap: () async {
                       Navigator.pop(context);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FractionsView(),
+                        ),
+                      );
                     }),
                 Divider(),
                 ListTile(
@@ -147,6 +158,12 @@ class _FrameViewState extends State<FrameView> {
             title: const Text('ConvertAll'),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             foregroundColor: Theme.of(context).colorScheme.onSecondary,
+            // Manually create button to avoid focus using tab key.
+            leading: IconButton(
+              icon: Icon(Icons.menu_rounded),
+              focusNode: FocusNode(skipTraversal: true),
+              onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+            ),
             actions: <Widget>[
               if (!model.isFilteringUnitData) ...[
                 Focus(
