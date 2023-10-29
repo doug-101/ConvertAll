@@ -13,6 +13,8 @@ import 'unit_group.dart';
 
 enum ActiveEditor { fromEdit, toEdit }
 
+enum NumRepr { short, fixed, scientific, engineering }
+
 /// The main model that stores unit data and conversion groups.
 class UnitController extends ChangeNotifier {
   static final unitData = UnitData();
@@ -35,7 +37,15 @@ class UnitController extends ChangeNotifier {
     await unitData.loadData();
     sortParam.unitStableSort(unitData.unitList);
     recentUnits.addAll(prefs.getStringList('recents') ?? <String>[]);
-    notifyListeners();
+    if ((prefs.getBool('load_recent') ?? false) && recentUnits.length >= 2) {
+      fromUnit.parse(recentUnits[0]);
+      toUnit.parse(recentUnits[1]);
+      // Use tab flag to select first editor with filled-in unit.
+      tabPressFlag = true;
+      updateUnitCalc();
+    } else {
+      notifyListeners();
+    }
   }
 
   /// Adjust sorting parameters based on a tap on a header.
@@ -96,7 +106,7 @@ class UnitController extends ChangeNotifier {
   void addRecentUnits(String unitText) async {
     recentUnits.remove(unitText);
     recentUnits.insert(0, unitText);
-    final maxLength = prefs.getInt('max_recents') ?? 10;
+    final maxLength = prefs.getInt('recent_unit_count') ?? 10;
     if (recentUnits.length > maxLength) {
       recentUnits.removeRange(maxLength, recentUnits.length);
     }
@@ -129,6 +139,7 @@ class UnitController extends ChangeNotifier {
 
   /// Return the resulting converted value as a String.
   String convertedValue() {
+    var result = '';
     if (canConvert && enteredValue != null) {
       double value;
       if (fromValueEntered) {
@@ -136,11 +147,42 @@ class UnitController extends ChangeNotifier {
       } else {
         value = toUnit.convert(enteredValue!, fromUnit);
       }
-      // Round to <16 significant figures to mask floating point errors,
-      // then go back to a short string representation.
-      return double.parse(value.toStringAsPrecision(15)).toString();
+      // Round to <16 significant figures to mask floating point errors.
+      value = double.parse(value.toStringAsPrecision(15));
+      final decPlcs = prefs.getInt('num_dec_plcs') ?? 8;
+      switch (NumRepr.values[prefs.getInt('result_notation') ?? 0]) {
+        case NumRepr.short:
+          if (value.abs() >= 1e+7 || value.abs() <= 1e-7) {
+            result = value.toStringAsExponential(decPlcs);
+            result = result.replaceFirst(RegExp(r'0+e'), 'e');
+          } else {
+            result = value.toStringAsFixed(decPlcs);
+            result = result.replaceFirst(RegExp(r'0+$'), '');
+          }
+        case NumRepr.fixed:
+          result = value.toStringAsFixed(decPlcs);
+        case NumRepr.scientific:
+          result = value.toStringAsExponential(decPlcs);
+        case NumRepr.engineering:
+          var exp = 0;
+          // log of zero is undefined.
+          if (value != 0.0) {
+            exp = (log(value.abs()) / ln10 / 3).floor() * 3;
+          }
+          value /= pow(10.0, exp);
+          // Round the number to see if rounding should bump the exponent.
+          value =
+              (value * pow(10.0, decPlcs)).roundToDouble() / pow(10.0, decPlcs);
+          if (value.abs() >= 1000.0) {
+            value /= 1000.0;
+            exp += 3;
+          }
+          result = exp >= 0
+              ? '${value.toStringAsFixed(decPlcs)}e+$exp'
+              : '${value.toStringAsFixed(decPlcs)}e$exp';
+      }
     }
-    return '';
+    return result;
   }
 
   /// Return a list of partial matches for the [currentUnit].

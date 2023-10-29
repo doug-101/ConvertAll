@@ -124,6 +124,14 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
               composing: TextRange.empty,
             );
           }
+          // Select all text if a recent unit was loaded at strtup.
+          if (_editorFocusNode.hasFocus && model.tabPressFlag) {
+            _editController.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: _editController.text.length,
+            );
+            model.tabPressFlag = false;
+          }
           return TextField(
             controller: _editController,
             focusNode: _editorFocusNode,

@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import '../main.dart' show prefs;
+import 'package:window_manager/window_manager.dart';
+import '../main.dart' show prefs, saveWindowGeo;
 import '../model/unit_controller.dart';
 import 'bases_view.dart';
 import 'fractions_view.dart';
 import 'help_view.dart';
+import 'settings_edit.dart';
 import 'unit_table.dart';
 import 'unit_text_editor.dart';
 import 'unit_value_editor.dart';
@@ -24,15 +26,59 @@ class FrameView extends StatefulWidget {
   State<FrameView> createState() => _FrameViewState();
 }
 
-class _FrameViewState extends State<FrameView> {
+class _FrameViewState extends State<FrameView> with WindowListener {
   // Key is used to avoid focusing open drawer icon.
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      windowManager.addListener(this);
+    }
     final model = Provider.of<UnitController>(context, listen: false);
     model.loadData();
+    if (prefs.getBool('show_tips') ?? true) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        startupTipDialog(context: context);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      windowManager.removeListener(this);
+    }
+    super.dispose();
+  }
+
+  /// Call main function to save window geometry after a resize.
+  @override
+  void onWindowResize() async {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      await saveWindowGeo();
+    }
+  }
+
+  /// Call main function to save window geometry after a move.
+  @override
+  void onWindowMove() async {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
+      await saveWindowGeo();
+    }
   }
 
   @override
@@ -63,12 +109,12 @@ class _FrameViewState extends State<FrameView> {
                   title: const Text('Settings'),
                   onTap: () async {
                     Navigator.pop(context);
-                    // await Navigator.push(
-                    // context,
-                    // MaterialPageRoute(
-                    // builder: (context) => SettingEdit(),
-                    // ),
-                    // );
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingEdit(),
+                      ),
+                    );
                   },
                 ),
                 Divider(),
@@ -116,24 +162,15 @@ class _FrameViewState extends State<FrameView> {
                   onTap: () async {
                     Navigator.pop(context);
                     final packageInfo = await PackageInfo.fromPlatform();
-                    final ratio = prefs.getDouble('view_scale') ?? 1.0;
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return FractionallySizedBox(
-                          widthFactor: 1 / ratio,
-                          heightFactor: 1 / ratio,
-                          child: Transform.scale(
-                            scale: ratio,
-                            child: AboutDialog(
-                              applicationName: 'ConvertAll',
-                              applicationVersion:
-                                  'Version ${packageInfo.version}',
-                              applicationLegalese: '©2023 by Douglas W. Bell',
-                              applicationIcon: Image.asset(
-                                'assets/images/convertall_icon_48.png',
-                              ),
-                            ),
+                        return AboutDialog(
+                          applicationName: 'ConvertAll',
+                          applicationVersion: 'Version ${packageInfo.version}',
+                          applicationLegalese: '©2023 by Douglas W. Bell',
+                          applicationIcon: Image.asset(
+                            'assets/images/convertall_icon_48.png',
                           ),
                         );
                       },

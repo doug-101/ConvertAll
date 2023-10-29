@@ -1,4 +1,4 @@
-// help_view.dart, shows a Markdown output of the README file.
+// help_view.dart, shows Markdown output of the README file and startup tips.
 // ConvertAll, a versatile unit conversion program.
 // Copyright (c) 2023, Douglas W. Bell.
 // Free software, GPL v2 or later.
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_markdown_selectionarea/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../main.dart' show prefs;
 
 const pathPrefix = 'assets/help/';
 
@@ -128,4 +129,75 @@ class _HelpViewState extends State<HelpView> {
       ),
     );
   }
+}
+
+const _tipContent = '''
+ConvertAll's strength is the ability to combine units.
+Any of the following can be typed:
+ * "m / s" for meters per second
+ * "ft * lbf" for foot-pounds (torque)
+ * "in^2" for square inches
+ * "m^3" for cubic meters
+ * or any other combinations
+''';
+
+Future<void> startupTipDialog({
+  required BuildContext context,
+}) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      var showTip = true;
+      return AlertDialog(
+        title: const Text(
+          'Tip: Combining Units',
+          textAlign: TextAlign.center,
+        ),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: Text(_tipContent),
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      showTip = !showTip;
+                      prefs.setBool('show_tips', showTip);
+                    });
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text('Show this tip at startup'),
+                      ),
+                      Switch(
+                        value: showTip,
+                        onChanged: (bool value) {
+                          setState(() {
+                            showTip = !showTip;
+                            prefs.setBool('show_tips', showTip);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      );
+    },
+  );
 }
