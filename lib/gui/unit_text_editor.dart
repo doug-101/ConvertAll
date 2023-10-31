@@ -13,8 +13,15 @@ import '../model/unit_group.dart';
 class UnitTextEditor extends StatefulWidget {
   final UnitGroup unitGroup;
   final bool isFrom;
+  final FocusNode? focusNode;
 
-  UnitTextEditor({super.key, required this.unitGroup, required this.isFrom});
+  UnitTextEditor({
+    super.key,
+    required this.unitGroup,
+    required this.isFrom,
+    // External focusNode allows parent to explicitly set the focus widget.
+    this.focusNode,
+  });
 
   @override
   State<UnitTextEditor> createState() => _UnitTextEditorState();
@@ -37,7 +44,8 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
         checkCurrentUnit();
       }
     });
-    _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
+    _editorFocusNode = widget.focusNode ?? FocusNode();
+    _editorFocusNode.onKeyEvent = (node, event) {
       if (event is KeyDownEvent) {
         switch (event.logicalKey) {
           case LogicalKeyboardKey.tab:
@@ -63,7 +71,7 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
         return KeyEventResult.handled;
       }
       return KeyEventResult.ignored;
-    });
+    };
     _editorFocusNode.addListener(() {
       if (_editorFocusNode.hasFocus) {
         if (model.tabPressFlag) {

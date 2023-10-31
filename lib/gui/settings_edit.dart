@@ -44,6 +44,7 @@ class _SettingEditState extends State<SettingEdit> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
+            tooltip: 'Close without saving',
             onPressed: () {
               _cancelFlag = true;
               Navigator.pop(context, null);

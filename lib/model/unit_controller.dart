@@ -85,6 +85,13 @@ class UnitController extends ChangeNotifier {
     updateUnitCalc();
   }
 
+  /// Clear entered units.
+  void claerUnits() {
+    fromUnit.clearUnit();
+    toUnit.clearUnit();
+    updateUnitCalc();
+  }
+
   /// Set [canConvert] based on whether the units are valid and compatible.
   void updateUnitCalc() {
     canConvert = false;

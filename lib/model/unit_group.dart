@@ -81,6 +81,14 @@ class UnitGroup implements UnitItem {
     }
   }
 
+  /// Remove current unit entries.
+  void clearUnit() {
+    unitItems.clear();
+    reducedGroup = null;
+    factor = 1.0;
+    parenthClosed = true;
+  }
+
   @override
   bool get isValid {
     return unitItems.isNotEmpty &&

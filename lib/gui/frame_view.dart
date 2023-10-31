@@ -29,6 +29,8 @@ class FrameView extends StatefulWidget {
 class _FrameViewState extends State<FrameView> with WindowListener {
   // Key is used to avoid focusing open drawer icon.
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  // Stored FocusNode allows explicitly setting focus to from unit on clear.
+  final _fromEditorFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -202,6 +204,15 @@ class _FrameViewState extends State<FrameView> with WindowListener {
               onPressed: () => _scaffoldKey.currentState!.openDrawer(),
             ),
             actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.playlist_remove),
+                tooltip: 'Clear unit entries',
+                focusNode: FocusNode(skipTraversal: true),
+                onPressed: () {
+                  _fromEditorFocusNode.requestFocus();
+                  model.claerUnits();
+                },
+              ),
               if (!model.isFilteringUnitData) ...[
                 Focus(
                   // Avoid tab giving focus to this menu.
@@ -278,6 +289,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                         UnitTextEditor(
                           unitGroup: model.fromUnit,
                           isFrom: true,
+                          focusNode: _fromEditorFocusNode,
                         ),
                         UnitTextEditor(
                           unitGroup: model.toUnit,
