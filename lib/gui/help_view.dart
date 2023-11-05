@@ -57,8 +57,6 @@ class _HelpViewState extends State<HelpView> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Help - ConvertAll'),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          foregroundColor: Theme.of(context).colorScheme.onSecondary,
           actions: <Widget>[
             if (pagePos > 0)
               IconButton(

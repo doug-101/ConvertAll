@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'common_widgets.dart';
 
 typedef void ValueBaseCallback(String entry, int base);
 
@@ -56,8 +57,6 @@ class _BasesViewState extends State<BasesView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Base Conversions'),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         leading: IconButton(
           // Manually create button to avoid focus using tab key.
           icon: BackButtonIcon(),
@@ -222,11 +221,15 @@ class _BaseEditorState extends State<BaseEditor> {
     }
     return Padding(
       padding: const EdgeInsets.only(top: 12),
-      child: TextField(
+      child: LabelledTextEditor(
+        labelText: widget.label,
+        errorText: widget.isValueFixed && widget.errorMsg.isNotEmpty
+            ? widget.errorMsg
+            : null,
+        // helperText avoids movement when errorText is shown.
+        helperText: ' ',
         controller: _editController,
         focusNode: _editorFocusNode,
-        // Avoid losing focus when clicking elsewhere.
-        onTapOutside: (event) {},
         autofocus: true,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(
@@ -236,15 +239,6 @@ class _BaseEditorState extends State<BaseEditor> {
         onChanged: (String newText) {
           widget.callback(newText, widget.base);
         },
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: widget.label,
-          errorText: widget.isValueFixed && widget.errorMsg.isNotEmpty
-              ? widget.errorMsg
-              : null,
-          // helperText avoids movement when errorText is shown.
-          helperText: ' ',
-        ),
       ),
     );
   }

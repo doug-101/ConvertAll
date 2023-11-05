@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
 import '../model/unit_group.dart';
+import 'common_widgets.dart';
 
 class UnitTextEditor extends StatefulWidget {
   final UnitGroup unitGroup;
@@ -140,12 +141,11 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
             );
             model.tabPressFlag = false;
           }
-          return TextField(
+          return LabelledTextEditor(
+            labelText: widget.isFrom ? 'From Unit' : 'To Unit',
             controller: _editController,
             focusNode: _editorFocusNode,
             autofocus: widget.isFrom,
-            // Avoid losing focus when clicking on unit table or elsewhere.
-            onTapOutside: (event) {},
             onChanged: (String newText) {
               // Compare with spaces removed to allow backspace to remove
               // extra space.
@@ -160,10 +160,6 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
                 );
               }
             },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: widget.isFrom ? 'From Unit' : 'To Unit',
-            ),
           );
         },
       ),

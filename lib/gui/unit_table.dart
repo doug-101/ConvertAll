@@ -76,17 +76,17 @@ class _UnitTableState extends State<UnitTable> {
                           final isSelected =
                               unit == model.currentUnit?.unitMatch;
                           final isActive = unit == model.highlightedTableUnit;
-                          final textStyle = isSelected
-                              ? TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                )
-                              : isActive
-                                  ? TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    )
-                                  : null;
+                          final textStyle = TextStyle(
+                            color: isSelected
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer
+                                : isActive
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant
+                                    : Theme.of(context).colorScheme.onSurface,
+                          );
                           return GestureDetector(
                             onTap: () {
                               model.replaceCurrentUnit(unit);
@@ -101,8 +101,10 @@ class _UnitTableState extends State<UnitTable> {
                                       color: Theme.of(context).dividerColor),
                                 ),
                                 color: isSelected
-                                    ? Theme.of(context).primaryColor
-                                    : null,
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : Theme.of(context).colorScheme.surface,
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -154,7 +156,7 @@ class _UnitTableHeader extends SliverPersistentHeaderDelegate {
   double get minExtent => headerHeight;
 
   @override
-  bool shouldRebuild(_UnitTableHeader oldDelegate) => false;
+  bool shouldRebuild(_UnitTableHeader oldDelegate) => true;
 
   @override
   Widget build(

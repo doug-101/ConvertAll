@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../model/unit_controller.dart';
+import 'common_widgets.dart';
 
 class UnitValueEditor extends StatefulWidget {
   final bool isFrom;
@@ -74,11 +75,10 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
           }
           return Column(
             children: <Widget>[
-              TextField(
+              LabelledTextEditor(
+                labelText: widget.isFrom ? 'From Value' : 'To Value',
                 controller: _editController,
                 focusNode: _editorFocusNode,
-                // Avoid losing focus when clicking elsewhere.
-                onTapOutside: (event) {},
                 enabled: model.canConvert,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(
@@ -88,10 +88,6 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
                 onChanged: (String newText) {
                   model.updateEnteredValue(newText, widget.isFrom);
                 },
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: widget.isFrom ? 'From Value' : 'To Value',
-                ),
               ),
               Text(thisUnit.isValid ? thisUnit.toString() : '[no unit set]'),
             ],

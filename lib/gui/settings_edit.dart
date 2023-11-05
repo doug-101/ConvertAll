@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../main.dart' show prefs, allowSaveWindowGeo, saveWindowGeo;
+import '../model/theme_model.dart';
 import '../model/unit_controller.dart';
 
 /// A user settings view.
@@ -29,6 +30,8 @@ class _SettingEditState extends State<SettingEdit> {
       _formKey.currentState!.save();
       final model = Provider.of<UnitController>(context, listen: false);
       model.notifyListeners();
+      final themeModel = Provider.of<ThemeModel>(context, listen: false);
+      themeModel.updateTheme();
       return true;
     }
     return false;
@@ -39,8 +42,6 @@ class _SettingEditState extends State<SettingEdit> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings - ConvertAll'),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),

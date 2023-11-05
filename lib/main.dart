@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'gui/frame_view.dart';
+import 'model/theme_model.dart';
 import 'model/unit_controller.dart';
 
 /// [prefs] is the global shared_preferences instance.
@@ -16,6 +17,9 @@ late final SharedPreferences prefs;
 
 /// This is initially false to avoid saving window geometry during setup.
 bool allowSaveWindowGeo = false;
+
+const _stdWidth = 1200.0;
+const _stdHeight = 1000.0;
 
 Future<void> main() async {
   LicenseRegistry.addLicense(
@@ -40,19 +44,17 @@ Future<void> main() async {
   );
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
-  final stdWidth = 1200.0;
-  final stdHeight = 1000.0;
   if (!kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.linux ||
           defaultTargetPlatform == TargetPlatform.windows ||
           defaultTargetPlatform == TargetPlatform.macOS)) {
     await windowManager.ensureInitialized();
-    var size = Size(stdWidth, stdHeight);
+    var size = Size(_stdWidth, _stdHeight);
     double? offsetX, offsetY;
     if (prefs.getBool('save_window_geo') ?? true) {
       size = Size(
-        prefs.getDouble('win_size_x') ?? stdWidth,
-        prefs.getDouble('win_size_y') ?? stdHeight,
+        prefs.getDouble('win_size_x') ?? _stdWidth,
+        prefs.getDouble('win_size_y') ?? _stdHeight,
       );
       offsetX = prefs.getDouble('win_pos_x');
       offsetY = prefs.getDouble('win_pos_y');
@@ -61,7 +63,7 @@ Future<void> main() async {
     await windowManager.setSize(size);
     windowManager.waitUntilReadyToShow(null, () async {
       await windowManager.setTitle('ConvertAll');
-      await windowManager.setMinimumSize(Size(270.0, 650.0));
+      await windowManager.setMinimumSize(Size(490.0, 950.0));
       await windowManager.setSize(size);
       if (offsetX != null && offsetY != null) {
         await windowManager.setPosition(Offset(offsetX, offsetY));
@@ -70,64 +72,63 @@ Future<void> main() async {
       allowSaveWindowGeo = prefs.getBool('save_window_geo') ?? true;
     });
   }
-  if (kIsWeb) {
-    final ratio = prefs.getDouble('calc_scale') ?? 1.0;
-    runApp(
-      FractionallySizedBox(
-        widthFactor: 1 / ratio,
-        heightFactor: 1 / ratio,
-        child: Transform.scale(
-          scale: ratio,
-          child: Container(
-            color: Color(0xFFa2b7bd),
-            child: Center(
-              child: SizedBox(
-                width: stdWidth,
-                height: stdHeight,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: _RootApp(),
-                ),
-              ),
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UnitController>(create: (_) => UnitController()),
+        ChangeNotifierProvider<ThemeModel>(create: (_) => ThemeModel()),
+      ],
+      child: Consumer<ThemeModel>(
+        builder: (context, themeModel, child) {
+          final rootApp = kIsWeb ? _webRootApp : _stdRootApp;
+          return rootApp(
+            child: MaterialApp(
+              title: 'ConvertAll',
+              theme: themeModel.getTheme(),
+              home: FrameView(),
+              debugShowCheckedModeBanner: false,
             ),
-          ),
-        ),
+          );
+        },
       ),
-    );
-  } else {
-    runApp(_RootApp());
-  }
+    ),
+  );
 }
 
-class _RootApp extends StatelessWidget {
-  _RootApp({super.key});
+Widget _stdRootApp({required Widget child}) {
+  final ratio = prefs.getDouble('view_scale') ?? 1.0;
+  return FractionallySizedBox(
+    widthFactor: 1 / ratio,
+    heightFactor: 1 / ratio,
+    child: Transform.scale(
+      scale: ratio,
+      child: child,
+    ),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final ratio = prefs.getDouble('view_scale') ?? 1.0;
-    return FractionallySizedBox(
-      widthFactor: 1 / ratio,
-      heightFactor: 1 / ratio,
-      child: Transform.scale(
-        scale: ratio,
-        child: ChangeNotifierProvider<UnitController>(
-          create: (context) => UnitController(),
-          child: MaterialApp(
-            title: 'ConvertAll',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                brightness: Brightness.light,
-                seedColor: Colors.red,
-              ),
-              useMaterial3: true,
+Widget _webRootApp({required Widget child}) {
+  final ratio = prefs.getDouble('view_scale') ?? 1.0;
+  return FractionallySizedBox(
+    widthFactor: 1 / ratio,
+    heightFactor: 1 / ratio,
+    child: Transform.scale(
+      scale: ratio,
+      child: Container(
+        color: Color(0xFFa2b7bd),
+        child: Center(
+          child: SizedBox(
+            width: _stdWidth,
+            height: _stdHeight,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: child,
             ),
-            home: FrameView(),
-            debugShowCheckedModeBanner: false,
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 Future<void> saveWindowGeo() async {

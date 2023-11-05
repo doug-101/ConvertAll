@@ -195,8 +195,6 @@ class _FrameViewState extends State<FrameView> with WindowListener {
           ),
           appBar: AppBar(
             title: const Text('ConvertAll'),
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            foregroundColor: Theme.of(context).colorScheme.onSecondary,
             // Manually create button to avoid focus using tab key.
             leading: IconButton(
               icon: Icon(Icons.menu_rounded),

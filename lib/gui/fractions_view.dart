@@ -6,6 +6,7 @@
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'common_widgets.dart';
 
 const fullWidth = 440.0;
 const columnWidth = 200.0;
@@ -29,8 +30,6 @@ class _FractionsViewState extends State<FractionsView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Fraction Conversions'),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         leading: IconButton(
           // Manually create button to avoid focus using tab key.
           icon: BackButtonIcon(),
@@ -72,8 +71,11 @@ class _FractionsViewState extends State<FractionsView> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: TextField(
-                    onTapOutside: (event) {},
+                  child: LabelledTextEditor(
+                    labelText: 'Expression',
+                    errorText: errorText,
+                    // helperText avoids movement when errorText is shown.
+                    helperText: ' ',
                     autofocus: true,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(
@@ -102,13 +104,6 @@ class _FractionsViewState extends State<FractionsView> {
                         }
                       });
                     },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Expression',
-                      errorText: errorText,
-                      // helperText avoids movement when errorText is shown.
-                      helperText: ' ',
-                    ),
                   ),
                 ),
                 Expanded(
@@ -174,17 +169,30 @@ class _FractionTableState extends State<FractionTable> {
                             bottom: BorderSide(
                                 color: Theme.of(context).dividerColor),
                           ),
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             SizedBox(
                               width: columnWidth,
-                              child: Text(widget.results[index].toString()),
+                              child: Text(
+                                widget.results[index].toString(),
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
                             ),
                             SizedBox(
                               width: columnWidth,
-                              child: Text(widget.results[index].toDecimal()),
+                              child: Text(
+                                widget.results[index].toDecimal(),
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
                             ),
                           ],
                         ),
