@@ -274,7 +274,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
             ],
           ),
           body: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Center(
               child: Column(
                 children: <Widget>[

@@ -6,7 +6,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../main.dart' show prefs, allowSaveWindowGeo, saveWindowGeo;
+import 'package:window_manager/window_manager.dart';
+import '../main.dart'
+    show prefs, minWidth, minHeight, allowSaveWindowGeo, saveWindowGeo;
 import '../model/theme_model.dart';
 import '../model/unit_controller.dart';
 
@@ -23,11 +25,31 @@ class _SettingEditState extends State<SettingEdit> {
   var _cancelFlag = false;
 
   final _formKey = GlobalKey<FormState>();
+  final origViewScale = prefs.getDouble('view_scale') ?? 1.0;
 
   Future<bool> updateOnPop() async {
     if (_cancelFlag) return true;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      final viewScale = prefs.getDouble('view_scale') ?? 1.0;
+      if (viewScale != origViewScale) {
+        final currentSize = await windowManager.getSize();
+        var currentWidth = currentSize.width;
+        var currentHeight = currentSize.height;
+        if (currentWidth < minWidth * viewScale) {
+          currentWidth = minWidth * viewScale;
+        }
+        if (currentHeight < minHeight * viewScale) {
+          currentHeight = minHeight * viewScale;
+        }
+        if (currentWidth != currentSize.width ||
+            currentHeight != currentSize.height) {
+          await windowManager.setSize(Size(currentWidth, currentHeight));
+        }
+        await windowManager.setMinimumSize(
+          Size(minWidth * viewScale, minHeight * viewScale),
+        );
+      }
       final model = Provider.of<UnitController>(context, listen: false);
       model.notifyListeners();
       final themeModel = Provider.of<ThemeModel>(context, listen: false);
@@ -167,12 +189,12 @@ class _SettingEditState extends State<SettingEdit> {
                     ),
                     validator: (String? value) {
                       if (value != null && value.isNotEmpty) {
-                        if (double.tryParse(value) == null) {
+                        final scale = double.tryParse(value);
+                        if (scale == null) {
                           return 'Must be an number';
                         }
-                        final scale = double.parse(value);
-                        if (scale > 5.0 || scale < 0.2) {
-                          return 'Valid range is 0.2 to 5.0';
+                        if (scale > 4.0 || scale < 0.25) {
+                          return 'Valid range is 0.25 to 4.0';
                         }
                       }
                       return null;

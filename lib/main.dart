@@ -18,8 +18,10 @@ late final SharedPreferences prefs;
 /// This is initially false to avoid saving window geometry during setup.
 bool allowSaveWindowGeo = false;
 
-const _stdWidth = 1200.0;
-const _stdHeight = 1000.0;
+const _stdWidth = 730.0;
+const _stdHeight = 630.0;
+const minWidth = 325.0;
+const minHeight = 630.0;
 
 Future<void> main() async {
   LicenseRegistry.addLicense(
@@ -49,13 +51,14 @@ Future<void> main() async {
           defaultTargetPlatform == TargetPlatform.windows ||
           defaultTargetPlatform == TargetPlatform.macOS)) {
     await windowManager.ensureInitialized();
-    var size = Size(_stdWidth, _stdHeight);
+    final viewScale = prefs.getDouble('view_scale') ?? 1.0;
+    var size = Size(_stdWidth, _stdHeight) * viewScale;
     double? offsetX, offsetY;
     if (prefs.getBool('save_window_geo') ?? true) {
       size = Size(
         prefs.getDouble('win_size_x') ?? _stdWidth,
         prefs.getDouble('win_size_y') ?? _stdHeight,
-      );
+      ) * viewScale;
       offsetX = prefs.getDouble('win_pos_x');
       offsetY = prefs.getDouble('win_pos_y');
     }
@@ -63,7 +66,9 @@ Future<void> main() async {
     await windowManager.setSize(size);
     windowManager.waitUntilReadyToShow(null, () async {
       await windowManager.setTitle('ConvertAll');
-      await windowManager.setMinimumSize(Size(490.0, 950.0));
+      await windowManager.setMinimumSize(
+        Size(minWidth * viewScale, minHeight * viewScale),
+      );
       await windowManager.setSize(size);
       if (offsetX != null && offsetY != null) {
         await windowManager.setPosition(Offset(offsetX, offsetY));
@@ -118,8 +123,8 @@ Widget _webRootApp({required Widget child}) {
         color: Color(0xFFa2b7bd),
         child: Center(
           child: SizedBox(
-            width: _stdWidth,
-            height: _stdHeight,
+            width: _stdWidth * ratio,
+            height: _stdHeight * ratio,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
               child: child,
