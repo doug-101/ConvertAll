@@ -20,8 +20,8 @@ bool allowSaveWindowGeo = false;
 
 const _stdWidth = 730.0;
 const _stdHeight = 630.0;
-const minWidth = 325.0;
-const minHeight = 630.0;
+const minWidth = 290.0;
+const minHeight = 380.0;
 
 Future<void> main() async {
   LicenseRegistry.addLicense(
@@ -56,9 +56,10 @@ Future<void> main() async {
     double? offsetX, offsetY;
     if (prefs.getBool('save_window_geo') ?? true) {
       size = Size(
-        prefs.getDouble('win_size_x') ?? _stdWidth,
-        prefs.getDouble('win_size_y') ?? _stdHeight,
-      ) * viewScale;
+            prefs.getDouble('win_size_x') ?? _stdWidth,
+            prefs.getDouble('win_size_y') ?? _stdHeight,
+          ) *
+          viewScale;
       offsetX = prefs.getDouble('win_pos_x');
       offsetY = prefs.getDouble('win_pos_y');
     }
@@ -138,9 +139,10 @@ Widget _webRootApp({required Widget child}) {
 
 Future<void> saveWindowGeo() async {
   if (!allowSaveWindowGeo) return;
+  final viewScale = prefs.getDouble('view_scale') ?? 1.0;
   final bounds = await windowManager.getBounds();
-  await prefs.setDouble('win_size_x', bounds.size.width);
-  await prefs.setDouble('win_size_y', bounds.size.height);
+  await prefs.setDouble('win_size_x', bounds.size.width / viewScale);
+  await prefs.setDouble('win_size_y', bounds.size.height / viewScale);
   await prefs.setDouble('win_pos_x', bounds.left);
   await prefs.setDouble('win_pos_y', bounds.top);
 }

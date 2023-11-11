@@ -72,9 +72,7 @@ class _BasesViewState extends State<BasesView> {
           alignment: Alignment.topCenter,
           child: SizedBox(
             width: 400.0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
+            child: ListView(
               children: <Widget>[
                 TextButton(
                   child: Text(baseParams.toString()),
@@ -220,7 +218,7 @@ class _BaseEditorState extends State<BaseEditor> {
       }
     }
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.only(top: 8),
       child: LabelledTextEditor(
         labelText: widget.label,
         errorText: widget.isValueFixed && widget.errorMsg.isNotEmpty

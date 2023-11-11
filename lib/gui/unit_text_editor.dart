@@ -117,51 +117,54 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
-      child: Consumer<UnitController>(
-        builder: (context, model, child) {
-          final newText = widget.unitGroup.toString();
-          if (newText != _editController.text) {
-            final lengthDelta = newText.length - _editController.text.length;
-            // Maintain cursor position from the end of the text.
-            var selectPos = _editController.selection.end + lengthDelta;
-            if (selectPos < 0) selectPos = 0;
-            _editController.value = _editController.value.copyWith(
-              text: newText,
-              selection: TextSelection.collapsed(offset: selectPos),
-              composing: TextRange.empty,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
+        child: Consumer<UnitController>(
+          builder: (context, model, child) {
+            final newText = widget.unitGroup.toString();
+            if (newText != _editController.text) {
+              final lengthDelta = newText.length - _editController.text.length;
+              // Maintain cursor position from the end of the text.
+              var selectPos = _editController.selection.end + lengthDelta;
+              if (selectPos < 0) selectPos = 0;
+              _editController.value = _editController.value.copyWith(
+                text: newText,
+                selection: TextSelection.collapsed(offset: selectPos),
+                composing: TextRange.empty,
+              );
+            }
+            // Select all text if a recent unit was loaded at strtup.
+            if (_editorFocusNode.hasFocus && model.tabPressFlag) {
+              _editController.selection = TextSelection(
+                baseOffset: 0,
+                extentOffset: _editController.text.length,
+              );
+              model.tabPressFlag = false;
+            }
+            return LabelledTextEditor(
+              labelText: widget.isFrom ? 'From Unit' : 'To Unit',
+              controller: _editController,
+              focusNode: _editorFocusNode,
+              autofocus: widget.isFrom,
+              onChanged: (String newText) {
+                // Compare with spaces removed to allow backspace to remove
+                // extra space.
+                if (newText.replaceAll(' ', '') !=
+                    widget.unitGroup.toString().replaceAll(' ', '')) {
+                  final cursorPosFromEnd =
+                      newText.length - _editController.selection.end;
+                  model.updateUnitText(
+                    widget.unitGroup,
+                    newText,
+                    cursorPosFromEnd,
+                  );
+                }
+              },
             );
-          }
-          // Select all text if a recent unit was loaded at strtup.
-          if (_editorFocusNode.hasFocus && model.tabPressFlag) {
-            _editController.selection = TextSelection(
-              baseOffset: 0,
-              extentOffset: _editController.text.length,
-            );
-            model.tabPressFlag = false;
-          }
-          return LabelledTextEditor(
-            labelText: widget.isFrom ? 'From Unit' : 'To Unit',
-            controller: _editController,
-            focusNode: _editorFocusNode,
-            autofocus: widget.isFrom,
-            onChanged: (String newText) {
-              // Compare with spaces removed to allow backspace to remove
-              // extra space.
-              if (newText.replaceAll(' ', '') !=
-                  widget.unitGroup.toString().replaceAll(' ', '')) {
-                final cursorPosFromEnd =
-                    newText.length - _editController.selection.end;
-                model.updateUnitText(
-                  widget.unitGroup,
-                  newText,
-                  cursorPosFromEnd,
-                );
-              }
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }

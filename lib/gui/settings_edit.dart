@@ -32,7 +32,11 @@ class _SettingEditState extends State<SettingEdit> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final viewScale = prefs.getDouble('view_scale') ?? 1.0;
-      if (viewScale != origViewScale) {
+      if (viewScale != origViewScale &&
+          !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.linux ||
+              defaultTargetPlatform == TargetPlatform.windows ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
         final currentSize = await windowManager.getSize();
         var currentWidth = currentSize.width;
         var currentHeight = currentSize.height;

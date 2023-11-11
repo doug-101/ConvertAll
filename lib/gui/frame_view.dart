@@ -276,52 +276,55 @@ class _FrameViewState extends State<FrameView> with WindowListener {
           body: Padding(
             padding: const EdgeInsets.all(16),
             child: Center(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceAround,
-                      runSpacing: 20,
+              child: SizedBox(
+                width: 750.0,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        UnitTextEditor(
-                          unitGroup: model.fromUnit,
-                          isFrom: true,
-                          focusNode: _fromEditorFocusNode,
+                        Flexible(
+                          child: UnitTextEditor(
+                            unitGroup: model.fromUnit,
+                            isFrom: true,
+                            focusNode: _fromEditorFocusNode,
+                          ),
                         ),
-                        UnitTextEditor(
-                          unitGroup: model.toUnit,
-                          isFrom: false,
+                        Flexible(
+                          child: UnitTextEditor(
+                            unitGroup: model.toUnit,
+                            isFrom: false,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: UnitTable(),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: UnitTable(),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceAround,
-                      runSpacing: 20,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        UnitValueEditor(
-                          isFrom: true,
+                        Flexible(
+                          child: UnitValueEditor(
+                            isFrom: true,
+                          ),
                         ),
-                        UnitValueEditor(
-                          isFrom: false,
+                        Flexible(
+                          child: UnitValueEditor(
+                            isFrom: false,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(model.statusString),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(model.statusString),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

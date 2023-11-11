@@ -70,7 +70,7 @@ class _FractionsViewState extends State<FractionsView> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: LabelledTextEditor(
                     labelText: 'Expression',
                     errorText: errorText,
@@ -134,73 +134,86 @@ class _FractionTableState extends State<FractionTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: _horziScrollCtrl,
-      thumbVisibility: true,
-      trackVisibility: true,
-      child: Scrollbar(
-        controller: _vertScrollCtrl,
-        thumbVisibility: true,
-        trackVisibility: true,
-        notificationPredicate: (notif) => notif.depth == 1,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: headerHeight + lineHeight,
+          maxHeight: headerHeight +
+              lineHeight *
+                  (widget.results.length > 0 ? widget.results.length + 0.3 : 1),
+        ),
+        child: Scrollbar(
           controller: _horziScrollCtrl,
-          child: SizedBox(
-            width: fullWidth,
-            child: CustomScrollView(
-              controller: _vertScrollCtrl,
-              slivers: <Widget>[
-                SliverPersistentHeader(
-                  pinned: true,
-                  floating: false,
-                  delegate: _FractionTableHeader(),
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: widget.results.length,
-                    (BuildContext context, int index) {
-                      return Container(
-                        alignment: Alignment.center,
-                        constraints:
-                            BoxConstraints.tightFor(height: lineHeight),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: Theme.of(context).dividerColor),
-                          ),
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            SizedBox(
-                              width: columnWidth,
-                              child: Text(
-                                widget.results[index].toString(),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
+          thumbVisibility: true,
+          trackVisibility: true,
+          child: Scrollbar(
+            controller: _vertScrollCtrl,
+            thumbVisibility: true,
+            trackVisibility: true,
+            notificationPredicate: (notif) => notif.depth == 1,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: _horziScrollCtrl,
+              child: SizedBox(
+                width: fullWidth,
+                child: CustomScrollView(
+                  controller: _vertScrollCtrl,
+                  slivers: <Widget>[
+                    SliverPersistentHeader(
+                      pinned: true,
+                      floating: false,
+                      delegate: _FractionTableHeader(),
+                    ),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        childCount: widget.results.length,
+                        (BuildContext context, int index) {
+                          return Container(
+                            alignment: Alignment.center,
+                            constraints:
+                                BoxConstraints.tightFor(height: lineHeight),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                    color: Theme.of(context).dividerColor),
                               ),
+                              color: Theme.of(context).colorScheme.surface,
                             ),
-                            SizedBox(
-                              width: columnWidth,
-                              child: Text(
-                                widget.results[index].toDecimal(),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: columnWidth,
+                                  child: Text(
+                                    widget.results[index].toString(),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  width: columnWidth,
+                                  child: Text(
+                                    widget.results[index].toDecimal(),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

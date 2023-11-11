@@ -60,39 +60,42 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
-      child: Consumer<UnitController>(
-        builder: (context, model, child) {
-          final thisUnit = widget.isFrom ? model.fromUnit : model.toUnit;
-          if (model.canConvert) {
-            if (widget.isFrom != model.fromValueEntered) {
-              _editController.text = model.convertedValue();
-            } else if (_editController.text.isEmpty &&
-                model.enteredValue != null) {
-              _editController.text = model.enteredValue.toString();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
+        child: Consumer<UnitController>(
+          builder: (context, model, child) {
+            final thisUnit = widget.isFrom ? model.fromUnit : model.toUnit;
+            if (model.canConvert) {
+              if (widget.isFrom != model.fromValueEntered) {
+                _editController.text = model.convertedValue();
+              } else if (_editController.text.isEmpty &&
+                  model.enteredValue != null) {
+                _editController.text = model.enteredValue.toString();
+              }
             }
-          }
-          return Column(
-            children: <Widget>[
-              LabelledTextEditor(
-                labelText: widget.isFrom ? 'From Value' : 'To Value',
-                controller: _editController,
-                focusNode: _editorFocusNode,
-                enabled: model.canConvert,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'[\d\.eE\+\-\*/\(\) ]'),
-                  ),
-                ],
-                onChanged: (String newText) {
-                  model.updateEnteredValue(newText, widget.isFrom);
-                },
-              ),
-              Text(thisUnit.isValid ? thisUnit.toString() : '[no unit set]'),
-            ],
-          );
-        },
+            return Column(
+              children: <Widget>[
+                LabelledTextEditor(
+                  labelText: widget.isFrom ? 'From Value' : 'To Value',
+                  controller: _editController,
+                  focusNode: _editorFocusNode,
+                  enabled: model.canConvert,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[\d\.eE\+\-\*/\(\) ]'),
+                    ),
+                  ],
+                  onChanged: (String newText) {
+                    model.updateEnteredValue(newText, widget.isFrom);
+                  },
+                ),
+                Text(thisUnit.isValid ? thisUnit.toString() : '[no unit set]'),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

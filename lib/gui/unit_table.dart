@@ -37,107 +37,125 @@ class _UnitTableState extends State<UnitTable> {
               model.highlightedTableUnit ?? model.currentUnit?.unitMatch;
           if (visibleUnit != null) {
             final pos = unitList.indexOf(visibleUnit) * lineHeight;
+            print('$pos ${_vertScrollCtrl.offset} $viewHeight');
             if (pos >= 0 && pos < _vertScrollCtrl.offset) {
               // Need to scroll up.
               _vertScrollCtrl.jumpTo(pos);
-            } else if (pos > _vertScrollCtrl.offset + viewHeight) {
+            } else if (pos > _vertScrollCtrl.offset + viewHeight - lineHeight) {
               // Need to scroll down.
               _vertScrollCtrl.jumpTo(pos - viewHeight + lineHeight);
             }
           }
         }
-        return Scrollbar(
-          controller: _horziScrollCtrl,
-          thumbVisibility: true,
-          trackVisibility: true,
-          child: Scrollbar(
-            controller: _vertScrollCtrl,
-            thumbVisibility: true,
-            trackVisibility: true,
-            notificationPredicate: (notif) => notif.depth == 1,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+        // Align and set the max height to get the horizontal scrollbar near
+        // the table when there aren't many entries.
+        return Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: headerHeight + lineHeight,
+              maxHeight: headerHeight +
+                  lineHeight *
+                      (unitList.length > 0 ? unitList.length + 0.3 : 1),
+            ),
+            child: Scrollbar(
               controller: _horziScrollCtrl,
-              child: SizedBox(
-                width: 750.0,
-                child: CustomScrollView(
-                  controller: _vertScrollCtrl,
-                  slivers: <Widget>[
-                    SliverPersistentHeader(
-                      pinned: true,
-                      floating: false,
-                      delegate: _UnitTableHeader(),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        childCount: unitList.length,
-                        (BuildContext context, int index) {
-                          final unit = unitList[index];
-                          final isSelected =
-                              unit == model.currentUnit?.unitMatch;
-                          final isActive = unit == model.highlightedTableUnit;
-                          final textStyle = TextStyle(
-                            color: isSelected
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer
-                                : isActive
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant
-                                    : Theme.of(context).colorScheme.onSurface,
-                          );
-                          return GestureDetector(
-                            onTap: () {
-                              model.replaceCurrentUnit(unit);
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              constraints:
-                                  BoxConstraints.tightFor(height: lineHeight),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                      color: Theme.of(context).dividerColor),
-                                ),
+              thumbVisibility: true,
+              trackVisibility: true,
+              child: Scrollbar(
+                controller: _vertScrollCtrl,
+                thumbVisibility: true,
+                trackVisibility: true,
+                notificationPredicate: (notif) => notif.depth == 1,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: _horziScrollCtrl,
+                  child: SizedBox(
+                    width: 750.0,
+                    child: CustomScrollView(
+                      controller: _vertScrollCtrl,
+                      slivers: <Widget>[
+                        SliverPersistentHeader(
+                          pinned: true,
+                          floating: false,
+                          delegate: _UnitTableHeader(),
+                        ),
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: unitList.length,
+                            (BuildContext context, int index) {
+                              final unit = unitList[index];
+                              final isSelected =
+                                  unit == model.currentUnit?.unitMatch;
+                              final isActive =
+                                  unit == model.highlightedTableUnit;
+                              final textStyle = TextStyle(
                                 color: isSelected
                                     ? Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer
-                                    : Theme.of(context).colorScheme.surface,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 280.0,
-                                    child: Text(
-                                      unit.nameWithUnabbrev,
-                                      style: textStyle,
+                                        .onPrimaryContainer
+                                    : isActive
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                              );
+                              return GestureDetector(
+                                onTap: () {
+                                  model.replaceCurrentUnit(unit);
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  constraints: BoxConstraints.tightFor(
+                                      height: lineHeight),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          color:
+                                              Theme.of(context).dividerColor),
                                     ),
+                                    color: isSelected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                        : Theme.of(context).colorScheme.surface,
                                   ),
-                                  SizedBox(
-                                    width: 150.0,
-                                    child: Text(
-                                      unit.type,
-                                      style: textStyle,
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: 280.0,
+                                        child: Text(
+                                          unit.nameWithUnabbrev,
+                                          style: textStyle,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 150.0,
+                                        child: Text(
+                                          unit.type,
+                                          style: textStyle,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 280.0,
+                                        child: Text(
+                                          unit.comment,
+                                          style: textStyle,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 280.0,
-                                    child: Text(
-                                      unit.comment,
-                                      style: textStyle,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -155,6 +173,7 @@ class _UnitTableHeader extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => headerHeight;
 
+  // Rebuild is needed to update light/dark theme setting.
   @override
   bool shouldRebuild(_UnitTableHeader oldDelegate) => true;
 
