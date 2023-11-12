@@ -37,7 +37,6 @@ class _UnitTableState extends State<UnitTable> {
               model.highlightedTableUnit ?? model.currentUnit?.unitMatch;
           if (visibleUnit != null) {
             final pos = unitList.indexOf(visibleUnit) * lineHeight;
-            print('$pos ${_vertScrollCtrl.offset} $viewHeight');
             if (pos >= 0 && pos < _vertScrollCtrl.offset) {
               // Need to scroll up.
               _vertScrollCtrl.jumpTo(pos);

@@ -91,6 +91,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
       builder: (context, model, child) {
         return Scaffold(
           key: _scaffoldKey,
+          resizeToAvoidBottomInset: true,
           drawer: Drawer(
             child: ListView(
               children: <Widget>[

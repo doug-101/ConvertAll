@@ -1,16 +1,15 @@
-# convertall
+# What is ConvertAll?
 
-A new Flutter project.
+Why write another unit converter? There are plenty of them out there. Well, I
+couldn't find one that worked quite the way I wanted.
 
-## Getting Started
+With ConvertAll, you can combine the units any way you want. If you want to
+convert from inches per decade, that's fine. Or from meter-pounds. Or from
+cubic nautical miles. The units don't have to make sense to anyone else.
 
-This project is a starting point for a Flutter application.
+# More Info
 
-A few resources to get you started if this is your first Flutter project:
+See the [ConvertAll homepage](http://convertall.bellz.org) for more info.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+There is also an [online version](http://convertall-js.bellz.org) that can
+be used with no software installation.
