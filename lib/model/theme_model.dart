@@ -42,11 +42,14 @@ class ThemeModel extends ChangeNotifier {
       // Background is used for static background areas.
       background: Color(0xfff3d5b5),
       onBackground: Colors.black,
-      // Surface used for field editors and tables.
+      // Surface used for field editors and tables (if active).
       surface: Color(0xffffedd8),
       onSurface: Colors.black,
+      // Surface used for field editors (if inactive).
+      surfaceVariant: Color(0xffffedd8),
+      onSurfaceVariant: Color(0xffcccccc),
       // Used on a surface for highlighted (not selected) items.
-      onSurfaceVariant: Color(0xff0077b6),
+      surfaceTint: Color(0xff0077b6),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xff0077b6),
@@ -80,11 +83,14 @@ class ThemeModel extends ChangeNotifier {
       // Background is used for static background areas.
       background: Color(0xff343a40),
       onBackground: Colors.black,
-      // Surface used for field editors and tables.
+      // Surface used for field editors and tables (if active).
       surface: Color(0xff212529),
       onSurface: Color(0xffe9ecef),
+      // Surface used for field editors (if inactive).
+      surfaceVariant: Color(0xff212529),
+      onSurfaceVariant: Color(0xff444444),
       // Used on a surface for highlighted (not selected) items.
-      onSurfaceVariant: Color(0xff0077b6),
+      surfaceTint: Color(0xff0077b6),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.black,

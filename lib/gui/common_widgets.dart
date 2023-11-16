@@ -51,10 +51,14 @@ class LabelledTextEditor extends StatelessWidget {
               helperText: helperText,
               border: OutlineInputBorder(),
               filled: true,
-              fillColor: Theme.of(context).colorScheme.surface,
+              fillColor: enabled
+                  ? Theme.of(context).colorScheme.surface
+                  : Theme.of(context).colorScheme.surfaceVariant,
             ),
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: enabled
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),

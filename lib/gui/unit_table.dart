@@ -96,7 +96,7 @@ class _UnitTableState extends State<UnitTable> {
                                     : isActive
                                         ? Theme.of(context)
                                             .colorScheme
-                                            .onSurfaceVariant
+                                            .surfaceTint
                                         : Theme.of(context)
                                             .colorScheme
                                             .onSurface,
