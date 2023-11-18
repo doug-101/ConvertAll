@@ -99,12 +99,12 @@ class UnitController extends ChangeNotifier {
     if (fromUnit.isValid && toUnit.isValid) {
       if (fromUnit.isCategoryMatch(toUnit)) {
         canConvert = true;
-        statusString = 'Converting...';
+        statusString = 'Converting  (reduce to:  ${fromUnit.reducedGroup} )';
         addRecentUnits(toUnit.toString());
         addRecentUnits(fromUnit.toString());
       } else {
-        statusString = 'Units are not compatible (${fromUnit.reducedGroup} '
-            'vs. ${toUnit.reducedGroup})';
+        statusString = 'Units are not compatible ( ${fromUnit.reducedGroup} '
+            ' vs.  ${toUnit.reducedGroup} )';
       }
     }
     notifyListeners();
