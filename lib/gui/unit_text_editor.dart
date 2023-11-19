@@ -162,6 +162,11 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
                   );
                 }
               },
+              onSubmitted: (String newText) {
+                if (model.highlightedTableUnit != null) {
+                  model.replaceCurrentUnit(model.highlightedTableUnit!);
+                }
+              },
             );
           },
         ),

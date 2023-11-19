@@ -17,6 +17,7 @@ class LabelledTextEditor extends StatelessWidget {
   bool enabled;
   List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   LabelledTextEditor({
     super.key,
@@ -29,6 +30,7 @@ class LabelledTextEditor extends StatelessWidget {
     this.enabled = true,
     this.inputFormatters,
     this.onChanged,
+    this.onSubmitted,
   });
 
   @override
@@ -44,6 +46,7 @@ class LabelledTextEditor extends StatelessWidget {
             enabled: enabled,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
+            onSubmitted: onSubmitted,
             // Avoid losing focus when clicking on unit table or elsewhere.
             onTapOutside: (event) {},
             decoration: InputDecoration(
