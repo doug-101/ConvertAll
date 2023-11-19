@@ -18,8 +18,7 @@
 * Options control the formatting of numerical results.
 * The unit data includes over 500 units.
 * Conversions between various number bases (decimal, hexadecimal, octal and
-  binary) can be done in a separate dialog window.
-* A decimal number can be converted to fractional numbers in a separate dialog
-  window.
+  binary) can be done in a separate view.
+* A decimal number can be converted to fractional numbers in a separate view.
 * The format of the unit data file makes it easy to add additional units.
 

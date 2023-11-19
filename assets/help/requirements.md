@@ -2,6 +2,13 @@
 # System Requirements
 ---
 
+## Web
+
+ConvertAll can be run online without an installation.  See
+<http://convertall-web.bellz.org> to try it out.
+
+---
+
 ## Android
 
 ConvertAll should run on Android 4.1 (Jelly Bean) and above.
@@ -24,7 +31,6 @@ system:
 * Ninja build
 * pkg-config
 * XZ development headers
-* zenity
 
 ---
 

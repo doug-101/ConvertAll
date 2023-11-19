@@ -2,6 +2,13 @@
 # Installation
 ---
 
+## Web
+
+ConvertAll can be run online without an installation.  See
+<http://convertall-web.bellz.org> to try it out.
+
+---
+
 ## Android
 
 ConvertAll can be installed from Google Play,
@@ -19,9 +26,9 @@ directory.  You need to have at least 2GB of disk space available for the
 automated build.  Then change to the `ConvertAll` directory in a terminal, and
 run the following commands:
 
-    $ sudo ./tt_make.sh depends
-    $ ./tt_make.sh build
-    $ sudo ./tt_make.sh install
+    $ sudo ./ca_make.sh depends
+    $ ./ca_make.sh build
+    $ sudo ./ca_make.sh install
 
 The first command automatically installs dependencies using the `apt-get`,
 `dnf` or `pacman` native packaging system.  If desired, you can manually
@@ -38,8 +45,9 @@ deleted.
 
 ## Windows
 
-The simplest approach is to download the "convertall_x.x.x.zip" file and extract
-all of its contents to an empty folder.  Then run the "convertall.exe" file.
+The simplest approach is to download the "convertall_x.x.x.zip" file and
+extract all of its contents to an empty folder.  Then run the "convertall.exe"
+file.
 
 To compile ConvertAll from source, install the ConvertAll source from
 <https://github.com/doug-101/ConvertAll>.  Also install Flutter based on the

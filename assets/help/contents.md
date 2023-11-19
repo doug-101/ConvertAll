@@ -11,5 +11,5 @@
     * [Combining Units](combining.md)
     * [Non-Linear Conversions](nonlinear.md)
     * [Shortcuts](shortcuts.md)
-    * [Numbering System Conversions](numbering.md)
+    * [Number Base Conversions](numbering.md)
     * [Options](options.md)

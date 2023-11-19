@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="default.css" />
+
+    <title>ConvertAll - Installation</title>
+</head>
+
+<body>
+
+    <div class="interior">
+
+        <div class="title">
+            <img src="logo.png" alt="ConvertAll" />
+        </div>
+
+        <div class="toplinks">
+            <p>Version 1.0.0<p>
+            <p><a href="http://www.bellz.org/progs.html">Other Programs</a></p>
+            <p><a href="http://www.bellz.org/contact.html">Contact Info</a></p>
+        </div>
+
+        <div class="navigation">
+            <a href="index.html">Home&nbsp;/&nbsp;News</a>
+            <a href="feature.html">Features</a>
+            <a href="scrnsht.html">Screenshots</a>
+            <a href="require.html">Requirements</a>
+            <a href="download.html">Downloads</a>
+            <span class="current-nav">Installation</span>
+            <a href="use.html">How&nbsp;to&nbsp;Use</a>
+        </div>
+
+        <div class="content">
+
+            <h1>ConvertAll Installation</h1>
+
+              <h2>Online</h2>
+
+              <p>ConvertAll can be run online without an installation.  See
+              <a href="http://convertall-web.bellz.org">convertall-web.bellz.org</a>
+              to try it out.</p>
+
+              <h2>Android</h2>
+
+              <p>ConvertAll can be installed from Google Play, <a
+              href="https://play.google.com/store/apps/details?id=org.bellz.convertall">here.</a>
+
+              <p>Alternatively an APK file (convertall_x.x.x.apk) is provided that can be
+              downloaded to an Android device and run.</p>
+
+              <h2>Linux</h2>
+
+              <p>Extract the files from the archive (convertall_x.x.x.tar.gz) into a user-owned
+              directory.  You need to have at least 2GB of disk space available for the
+              automated build.  Then change to the <code>ConvertAll</code> directory in a
+              terminal, and run the following commands:</p>
+
+              <pre>
+                  $ sudo ./ca_make.sh depends
+                  $ ./ca_make.sh build
+                  $ sudo ./ca_make.sh install
+              </pre>
+
+              <p>The first command automatically installs dependencies using the apt-get,
+              dnf or pacman native packaging system.  If desired, you can manually install
+              the dependencies in the <a href="require.html">Requirements</a> section and
+              skip this line.</p>
+
+              <p>The second line (build) downloads Flutter and builds ConvertAll.</p>
+
+              <p>The third line (install) copies the necessary files into directories under
+              <code>/opt</code>.  After this step, the temporary <code>ConvertAll</code> build
+              directory can be deleted.</p>
+
+              <h2>Windows</h2>
+
+              <p>The simplest approach is to download the "convertall_x.x.x.zip" file and
+              extract all of its contents into an empty directory.  Then run the
+              "convertall.exe" file.</p>
+
+              <p>To compile ConvertAll from source, install the ConvertAll source from <a
+              href="https://github.com/doug-101/ConvertAll">GitHub</a>.  Also install Flutter
+              based on the instructions <a
+              href="https://docs.flutter.dev/get-started/install/windows">here</a>.  The
+              Android Setup is not required - just the Linux setup from the bottom of the
+              page.</p>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

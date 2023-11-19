@@ -4,7 +4,7 @@
 ## Options
 ---
 
-The "Options..." button allows for changing several default settings. These
+The "Settings" menu item allows for changing several default options. These
 settings are automatically stored so that ConvertAll will re-start with the
 settings last used.
 
@@ -15,16 +15,10 @@ significant loss of accuracy. Six places or higher is recommended (eight is the
 default).
 
 There is an option to set the number of recent units to be saved. Setting it to
-zero will disable the Recent Unit buttons. Another option will automatically
+zero will disable the recent unit button. Another option will automatically
 load the most recent previous units at startup.
 
-There are options to hide the operator text buttons (first row), and the unit
-buttons (second row). These can be hidden to save space if the keyboard will be
-used to enter the operators.
-
-Buttons are also included on the options dialog to control the colors of the
-text fields.
-
-Buttons are also included on the options dialog to control GUI colors and
-fonts. Colors can be selected by theme or individually. Larger fonts can be
-selected for use on high-resolution displays.
+The remaining options control appearances.  The view scale ratio can be set to
+make the content smaller or larger (useful for high-dpi displays). The window
+size and position will be restored from the previous session use if enabled.
+The final setting selects between light and dark color schemes.
