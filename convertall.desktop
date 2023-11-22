@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0.0
+Name=ConvertAll
+GenericName=Unit Converter
+Exec=convertall
+Icon=/opt/convertall/convertall_icon_64.png
+Terminal=false
+Categories=Science;Engineering;
+Comment=A unit conversion tool
