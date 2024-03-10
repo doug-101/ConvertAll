@@ -1,6 +1,6 @@
 // unit_group.dart, combines units and exponents.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'dart:convert' show json;
@@ -156,6 +156,7 @@ class UnitGroup implements UnitItem {
       unitMatch: newUnit,
       unitExp: oldAtom?.unitExp ?? 1,
       partialExp: oldAtom?.partialExp,
+      isExpValid: oldAtom?.isExpValid ?? true,
     );
     if (oldAtom == null) {
       if (unitItems.isEmpty) {
@@ -193,6 +194,7 @@ class UnitGroup implements UnitItem {
       unitAtom.unitExp = newExp;
     }
     unitAtom.partialExp = null;
+    unitAtom.isExpValid = true;
     reducedGroup = null;
     factor = 1.0;
   }
@@ -330,9 +332,15 @@ class UnitAtom implements UnitItem {
   UnitDatum? unitMatch;
   num unitExp = 1;
   String? partialExp;
+  bool isExpValid = true;
 
-  UnitAtom(
-      {this.unitName, this.unitMatch, required this.unitExp, this.partialExp});
+  UnitAtom({
+    this.unitName,
+    this.unitMatch,
+    required this.unitExp,
+    this.partialExp,
+    required this.isExpValid,
+  });
 
   UnitAtom.parse({
     required String unitString,
@@ -346,19 +354,28 @@ class UnitAtom implements UnitItem {
       final expText = parts[1].trim();
       try {
         unitExp = int.parse(expText);
+        if (unitExp.abs() == 1) {
+          // Keep partial exponent for the start of typing '1.5' or '-1.5'.
+          partialExp = '^$expText';
+        } else if (expText == '-0') {
+          // Keep partial exponent for the start of typing '-0.5',
+          partialExp = '^-0';
+        }
       } on FormatException {
         try {
           unitExp = double.parse(expText);
-        } on FormatException {
-          if (expText == '.') {
-            partialExp = '^0.';
-          } else if (expText == '-.') {
-            partialExp = '^-0.';
-          } else if (expText.startsWith('-')) {
-            partialExp = '^-';
-          } else {
-            partialExp = '^';
+          if (expText.endsWith('.')) {
+            // Keep partial exponent for the start of typing a fractional exp.
+            partialExp = '^$expText';
           }
+        } on FormatException {
+          partialExp = switch (expText) {
+            '.' => '^0.',
+            '-.' => '^-0.',
+            _ when expText.startsWith('-') => '^-',
+            _ => '^',
+          };
+          isExpValid = false;
         }
       }
     }
@@ -381,6 +398,9 @@ class UnitAtom implements UnitItem {
     }
     if (negativeExp) {
       unitExp = -unitExp;
+      if (isExpValid && partialExp != null) {
+        partialExp = partialExp!.replaceFirst('^-', '^');
+      }
     }
     if (unitMatch == null) {
       unitName = unitText;
@@ -388,7 +408,7 @@ class UnitAtom implements UnitItem {
   }
 
   @override
-  bool get isValid => unitMatch != null && partialExp == null;
+  bool get isValid => unitMatch != null && isExpValid;
 
   @override
   bool get isLinear => isValid && unitMatch!.fromEqn.isEmpty;
@@ -414,6 +434,7 @@ class UnitAtom implements UnitItem {
       unitMatch: unitMatch,
       unitExp: unitExp,
       partialExp: partialExp,
+      isExpValid: isExpValid,
     );
   }
 }
