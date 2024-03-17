@@ -26,8 +26,8 @@ class UnitGroup implements UnitItem {
   double factor = 1.0;
   bool parenthClosed = true;
 
-  void parse(String groupString, {claerFirst = true}) {
-    if (claerFirst) {
+  void parse(String groupString, {clearFirst = true}) {
+    if (clearFirst) {
       unitItems.clear();
       reducedGroup = null;
       factor = 1.0;
@@ -53,7 +53,7 @@ class UnitGroup implements UnitItem {
           subgroup.parenthClosed = false;
         }
         // Don't clear in order to preserve parenthesis flag.
-        subgroup.parse(matchText, claerFirst: false);
+        subgroup.parse(matchText, clearFirst: false);
         unitItems.add(subgroup);
         if (negativeExp) {
           for (var unit in subgroup._flatUnitList()) {

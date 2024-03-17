@@ -1,15 +1,16 @@
 // fractions_view.dart, shows a converter for fractional numbers.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
+import 'package:async/async.dart';
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'common_widgets.dart';
 
-const fullWidth = 440.0;
-const columnWidth = 200.0;
+const fullWidth = 460.0;
+const columnWidth = 220.0;
 const headerHeight = 40.0;
 const lineHeight = 30.0;
 
@@ -24,6 +25,7 @@ class _FractionsViewState extends State<FractionsView> {
   final results = <Fraction>[];
   double? decimalValue;
   String? errorText;
+  CancelableOperation? _calcOper;
 
   @override
   Widget build(BuildContext context) {
@@ -52,21 +54,13 @@ class _FractionsViewState extends State<FractionsView> {
                 TextButton(
                   child: Text(
                     usePowerOfTwo
-                        ? 'Limit denominators to powers of two'
-                        : 'Do not limit denominators to powers of two',
+                        ? 'Limiting denominators to powers of two'
+                        : 'Not limiing denominators to powers of two',
                   ),
                   focusNode: FocusNode(skipTraversal: true),
                   onPressed: () {
-                    setState(() {
-                      usePowerOfTwo = !usePowerOfTwo;
-                      if (decimalValue != null) {
-                        results.clear();
-                        results.addAll(fractionResults(
-                          decimalValue!,
-                          powerOfTwo: usePowerOfTwo,
-                        ));
-                      }
-                    });
+                    usePowerOfTwo = !usePowerOfTwo;
+                    asyncResults();
                   },
                 ),
                 Padding(
@@ -83,26 +77,22 @@ class _FractionsViewState extends State<FractionsView> {
                       ),
                     ],
                     onChanged: (String newText) {
-                      setState(() {
-                        results.clear();
-                        decimalValue = null;
-                        errorText = null;
-                        if (newText.isNotEmpty) {
-                          try {
-                            final decimal = Expression(newText).eval();
-                            decimalValue = decimal?.toDouble();
-                          } on ExpressionException {
-                          } on FormatException {}
-                          if (decimalValue != null) {
-                            results.addAll(fractionResults(
-                              decimalValue!,
-                              powerOfTwo: usePowerOfTwo,
-                            ));
-                          } else {
-                            errorText = 'Invalid value';
-                          }
+                      if (_calcOper != null) {
+                        _calcOper!.cancel();
+                      }
+                      decimalValue = null;
+                      errorText = null;
+                      if (newText.isNotEmpty) {
+                        try {
+                          final decimal = Expression(newText).eval();
+                          decimalValue = decimal?.toDouble();
+                        } on ExpressionException {
+                        } on FormatException {}
+                        if (decimalValue == null) {
+                          errorText = 'Invalid value';
                         }
-                      });
+                      }
+                      asyncResults();
                     },
                   ),
                 ),
@@ -115,6 +105,26 @@ class _FractionsViewState extends State<FractionsView> {
         ),
       ),
     );
+  }
+
+  /// Calculate fractions and update as an async cancellable operation.
+  void asyncResults() {
+    results.clear();
+    setState(() {});
+    if (decimalValue != null) {
+      // Start post-frame to allow editor to update first.
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        _calcOper = CancelableOperation.fromFuture(
+          fractionResults(
+            decimalValue!,
+            powerOfTwo: usePowerOfTwo,
+          ),
+        ).then((calcResults) {
+          results.addAll(calcResults);
+          setState(() {});
+        });
+      });
+    }
   }
 }
 
@@ -279,11 +289,14 @@ class Fraction {
 }
 
 /// Return fractions that closely match the given decimal.
-List<Fraction> fractionResults(double decimal, {var powerOfTwo = false}) {
+Future<List<Fraction>> fractionResults(
+  double decimal, {
+  var powerOfTwo = false,
+}) async {
   final results = <Fraction>[];
   if (decimal == 0.0) return results;
   final denomLimit = 1.0E+9;
-  final minOffset = 1.0E-10;
+  final minOffset = 1.0E-15;
   var denom = 2;
   var numer = (decimal * denom).round();
   var delta = (decimal - numer / denom).abs();
@@ -296,7 +309,7 @@ List<Fraction> fractionResults(double decimal, {var powerOfTwo = false}) {
         (delta == 0.0 ||
             (delta < minDelta - minOffset && delta <= nextDelta))) {
       results.add(Fraction(numer, denom));
-      if (delta == 0.0) break;
+      if (delta < 5.0E-16) break;
       minDelta = delta;
     }
     numer = nextNumer;
