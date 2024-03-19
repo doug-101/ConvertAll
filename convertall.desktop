@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Version=1.0.0
+Version=1.0.1
 Name=ConvertAll
 GenericName=Unit Converter
 Exec=convertall

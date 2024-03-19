@@ -1,6 +1,6 @@
 // frame_view.dart, the main view's frame and controls.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/foundation.dart';
@@ -171,7 +171,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                         return AboutDialog(
                           applicationName: 'ConvertAll',
                           applicationVersion: 'Version ${packageInfo.version}',
-                          applicationLegalese: '©2023 by Douglas W. Bell',
+                          applicationLegalese: '©2024 by Douglas W. Bell',
                           applicationIcon: Image.asset(
                             'assets/images/convertall_icon_48.png',
                           ),
