@@ -115,6 +115,7 @@ class UnitGroup implements UnitItem {
   }
 
   /// Uses swapExp to flip signs if the group is after a division sign.
+  @override
   String toString({bool swapExp = false}) {
     final strList = <String>[];
     for (var unit in unitItems) {
@@ -301,7 +302,9 @@ class UnitGroup implements UnitItem {
           expr.setDecimalVariable('x', Decimal.parse(value.toString()));
           result = expr.eval()?.toDouble();
         }
-      } on ExpressionException {}
+      } on ExpressionException {
+        // Ignore exception, caught be null result.
+      }
     } else {
       final List<dynamic> dataList = json.decode(unit.fromEqn);
       if (!isFrom) {
@@ -416,6 +419,7 @@ class UnitAtom implements UnitItem {
   @override
   bool get isFirstExpPositive => unitExp >= 0;
 
+  @override
   String toString({bool absExp = false}) {
     final name = unitMatch?.name ?? unitName ?? '';
     if (partialExp != null) {

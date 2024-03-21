@@ -1,6 +1,6 @@
 // main.dart, the main app entry point file.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/foundation.dart';
@@ -28,7 +28,7 @@ Future<void> main() async {
     () => Stream<LicenseEntry>.value(
       const LicenseEntryWithLineBreaks(
         <String>['ConvertAll'],
-        'ConvertAll, Copyright (C) 2023 by Douglas W. Bell\n\n'
+        'ConvertAll, Copyright (C) 2024 by Douglas W. Bell\n\n'
         'This program is free software; you can redistribute it and/or modify '
         'it under the terms of the GNU General Public License as published by '
         'the Free Software Foundation; either version 2 of the License, or '
@@ -52,7 +52,7 @@ Future<void> main() async {
           defaultTargetPlatform == TargetPlatform.macOS)) {
     await windowManager.ensureInitialized();
     final viewScale = prefs.getDouble('view_scale') ?? 1.0;
-    var size = Size(_stdWidth, _stdHeight) * viewScale;
+    var size = const Size(_stdWidth, _stdHeight) * viewScale;
     double? offsetX, offsetY;
     if (prefs.getBool('save_window_geo') ?? true) {
       size = Size(
@@ -86,12 +86,12 @@ Future<void> main() async {
       ],
       child: Consumer<ThemeModel>(
         builder: (context, themeModel, child) {
-          final rootApp = kIsWeb ? _webRootApp : _stdRootApp;
+          const rootApp = kIsWeb ? _webRootApp : _stdRootApp;
           return rootApp(
             child: MaterialApp(
               title: 'ConvertAll',
               theme: themeModel.getTheme(),
-              home: FrameView(),
+              home: const FrameView(),
               debugShowCheckedModeBanner: false,
             ),
           );
@@ -121,7 +121,7 @@ Widget _webRootApp({required Widget child}) {
     child: Transform.scale(
       scale: ratio,
       child: Container(
-        color: Color(0xFFa2b7bd),
+        color: const Color(0xFFa2b7bd),
         child: Center(
           child: SizedBox(
             width: _stdWidth * ratio,

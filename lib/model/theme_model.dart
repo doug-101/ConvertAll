@@ -1,9 +1,8 @@
 // theme_model.dart, retrieves and updates light and dark color themes.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../main.dart' show prefs;
 
@@ -23,7 +22,7 @@ class ThemeModel extends ChangeNotifier {
   }
 
   static final ThemeData lightTheme = ThemeData(
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       // Primary used for various built-in highlights.
       primary: Color(0xff03045e),
       onPrimary: Colors.white,
@@ -51,11 +50,11 @@ class ThemeModel extends ChangeNotifier {
       // Used on a surface for highlighted (not selected) items.
       surfaceTint: Color(0xff0077b6),
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xff0077b6),
       foregroundColor: Colors.white,
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       labelStyle: TextStyle(
         color: Colors.black,
       ),
@@ -64,7 +63,7 @@ class ThemeModel extends ChangeNotifier {
   );
 
   static final ThemeData darkTheme = ThemeData(
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       // Primary used for various built-in highlights.
       primary: Color(0xff00b4d8),
       onPrimary: Colors.black,
@@ -92,11 +91,11 @@ class ThemeModel extends ChangeNotifier {
       // Used on a surface for highlighted (not selected) items.
       surfaceTint: Color(0xff0077b6),
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black,
       foregroundColor: Color(0xff00b4d8),
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    inputDecorationTheme: const InputDecorationTheme(
       labelStyle: TextStyle(
         color: Colors.white,
       ),

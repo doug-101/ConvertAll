@@ -1,9 +1,8 @@
 // unit_text_editor.dart, provides a text edit widget for units.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +15,7 @@ class UnitTextEditor extends StatefulWidget {
   final bool isFrom;
   final FocusNode? focusNode;
 
-  UnitTextEditor({
+  const UnitTextEditor({
     super.key,
     required this.unitGroup,
     required this.isFrom,
@@ -120,7 +119,7 @@ class _UnitTextEditorState extends State<UnitTextEditor> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
+        constraints: const BoxConstraints(minWidth: 50, maxWidth: 280),
         child: Consumer<UnitController>(
           builder: (context, model, child) {
             final newText = widget.unitGroup.toString();

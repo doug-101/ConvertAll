@@ -1,9 +1,8 @@
 // unit_value_editor.dart, provides a number edit widget.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +12,7 @@ import 'common_widgets.dart';
 class UnitValueEditor extends StatefulWidget {
   final bool isFrom;
 
-  UnitValueEditor({super.key, required this.isFrom});
+  const UnitValueEditor({super.key, required this.isFrom});
 
   @override
   State<UnitValueEditor> createState() => _UnitValueEditorState();
@@ -63,7 +62,7 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: 50, maxWidth: 280),
+        constraints: const BoxConstraints(minWidth: 50, maxWidth: 280),
         child: Consumer<UnitController>(
           builder: (context, model, child) {
             final thisUnit = widget.isFrom ? model.fromUnit : model.toUnit;

@@ -1,6 +1,6 @@
 // common_widgets.dart, provides various customized widgets.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/material.dart';
@@ -13,13 +13,13 @@ class LabelledTextEditor extends StatelessWidget {
   final String? helperText;
   final TextEditingController? controller;
   final FocusNode? focusNode;
-  final autofocus;
-  bool enabled;
-  List<TextInputFormatter>? inputFormatters;
+  final bool autofocus;
+  final bool enabled;
+  final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
 
-  LabelledTextEditor({
+  const LabelledTextEditor({
     super.key,
     required this.labelText,
     this.errorText,
@@ -52,7 +52,7 @@ class LabelledTextEditor extends StatelessWidget {
             decoration: InputDecoration(
               errorText: errorText,
               helperText: helperText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               filled: true,
               fillColor: enabled
                   ? Theme.of(context).colorScheme.surface

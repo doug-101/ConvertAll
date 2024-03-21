@@ -1,6 +1,6 @@
 // unit_controller.dart, the main unit model file.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 // foundation.dart includes [ChangeNotifier].
@@ -46,6 +46,11 @@ class UnitController extends ChangeNotifier {
     } else {
       notifyListeners();
     }
+  }
+
+  /// Update all listeners to handle settings changes.
+  void generalUpdate() {
+    notifyListeners();
   }
 
   /// Adjust sorting parameters based on a tap on a header.

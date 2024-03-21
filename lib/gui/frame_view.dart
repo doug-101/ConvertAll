@@ -20,7 +20,7 @@ import 'unit_text_editor.dart';
 import 'unit_value_editor.dart';
 
 class FrameView extends StatefulWidget {
-  FrameView({super.key});
+  const FrameView({super.key});
 
   @override
   State<FrameView> createState() => _FrameViewState();
@@ -44,7 +44,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
     final model = Provider.of<UnitController>(context, listen: false);
     model.loadData();
     if (prefs.getBool('show_tips') ?? true) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         startupTipDialog(context: context);
       });
     }
@@ -115,12 +115,12 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SettingEdit(),
+                        builder: (context) => const SettingEdit(),
                       ),
                     );
                   },
                 ),
-                Divider(),
+                const Divider(),
                 ListTile(
                     leading: const Icon(Icons.numbers),
                     title: const Text('Bases'),
@@ -129,7 +129,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BasesView(),
+                          builder: (context) => const BasesView(),
                         ),
                       );
                     }),
@@ -141,11 +141,11 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FractionsView(),
+                          builder: (context) => const FractionsView(),
                         ),
                       );
                     }),
-                Divider(),
+                const Divider(),
                 ListTile(
                   leading: const Icon(Icons.help_outline),
                   title: const Text('Help View'),
@@ -154,7 +154,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HelpView(),
+                        builder: (context) => const HelpView(),
                       ),
                     );
                   },
@@ -165,6 +165,8 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                   onTap: () async {
                     Navigator.pop(context);
                     final packageInfo = await PackageInfo.fromPlatform();
+                    // Check for an async gap by making sure context is valid.
+                    if (!context.mounted) return;
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -182,7 +184,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                 ),
                 if (defaultTargetPlatform == TargetPlatform.linux ||
                     defaultTargetPlatform == TargetPlatform.macOS) ...[
-                  Divider(),
+                  const Divider(),
                   ListTile(
                     leading: const Icon(Icons.highlight_off_outlined),
                     title: const Text('Quit'),
@@ -198,7 +200,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
             title: const Text('ConvertAll'),
             // Manually create button to avoid focus using tab key.
             leading: IconButton(
-              icon: Icon(Icons.menu_rounded),
+              icon: const Icon(Icons.menu_rounded),
               focusNode: FocusNode(skipTraversal: true),
               onPressed: () => _scaffoldKey.currentState!.openDrawer(),
             ),
@@ -219,7 +221,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                   canRequestFocus: false,
                   descendantsAreTraversable: false,
                   child: PopupMenuButton<String>(
-                    icon: Icon(Icons.filter_alt),
+                    icon: const Icon(Icons.filter_alt),
                     tooltip: 'Filter units by type',
                     onSelected: (result) {
                       model.filterUnitData(result);
@@ -227,15 +229,15 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     itemBuilder: (context) => [
                       for (var type in UnitController.unitData.typeList)
                         PopupMenuItem<String>(
-                          child: Text(type),
                           value: type,
+                          child: Text(type),
                         ),
                     ],
                   ),
                 ),
               ] else ...[
                 IconButton(
-                  icon: Icon(Icons.filter_alt_off),
+                  icon: const Icon(Icons.filter_alt_off),
                   tooltip: 'Stop filtering',
                   focusNode: FocusNode(skipTraversal: true),
                   onPressed: () {
@@ -251,7 +253,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                   canRequestFocus: false,
                   descendantsAreTraversable: false,
                   child: PopupMenuButton<String>(
-                    icon: Icon(Icons.watch_later),
+                    icon: const Icon(Icons.watch_later),
                     tooltip: 'Recently used units',
                     onSelected: (result) {
                       model.replaceCurrentGroup(result);
@@ -259,8 +261,8 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     itemBuilder: (context) => [
                       for (var unitText in model.recentUnits)
                         PopupMenuItem<String>(
-                          child: Text(unitText),
                           value: unitText,
+                          child: Text(unitText),
                         )
                     ],
                   ),
@@ -299,13 +301,13 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                         ),
                       ],
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.symmetric(vertical: 20),
                         child: UnitTable(),
                       ),
                     ),
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Flexible(

@@ -1,6 +1,6 @@
 // bases_view.dart, shows a converter between numbers with different bases.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'dart:math' as math;
@@ -9,15 +9,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'common_widgets.dart';
 
-typedef void ValueBaseCallback(String entry, int base);
+typedef ValueBaseCallback = void Function(String entry, int base);
 
 /// Used to store bit depth and two's complement parameters.
-class _BaseParams {
+class BaseParams {
   final int numBits;
   final bool useTwosComplement;
 
-  _BaseParams({this.numBits = 32, this.useTwosComplement = false});
+  BaseParams({this.numBits = 32, this.useTwosComplement = false});
 
+  @override
   String toString() {
     return "$numBits bits, ${useTwosComplement ? '' : 'no '}two's complement";
   }
@@ -25,6 +26,8 @@ class _BaseParams {
 
 /// Provides a view for base conversions.
 class BasesView extends StatefulWidget {
+  const BasesView({super.key});
+
   @override
   State<BasesView> createState() => _BasesViewState();
 }
@@ -32,7 +35,7 @@ class BasesView extends StatefulWidget {
 class _BasesViewState extends State<BasesView> {
   int? decValue;
   int? enteredBase;
-  var baseParams = _BaseParams();
+  var baseParams = BaseParams();
   var errorMsg = '';
 
   /// Callback to set decimal value and active base.
@@ -59,7 +62,7 @@ class _BasesViewState extends State<BasesView> {
         title: const Text('Base Conversions'),
         leading: IconButton(
           // Manually create button to avoid focus using tab key.
-          icon: BackButtonIcon(),
+          icon: const BackButtonIcon(),
           focusNode: FocusNode(skipTraversal: true),
           onPressed: () {
             Navigator.pop(context);
@@ -75,7 +78,6 @@ class _BasesViewState extends State<BasesView> {
             child: ListView(
               children: <Widget>[
                 TextButton(
-                  child: Text(baseParams.toString()),
                   focusNode: FocusNode(skipTraversal: true),
                   onPressed: () async {
                     final params = await _baseParamDialog(
@@ -93,6 +95,7 @@ class _BasesViewState extends State<BasesView> {
                       });
                     }
                   },
+                  child: Text(baseParams.toString()),
                 ),
                 BaseEditor(
                   base: 10,
@@ -150,11 +153,11 @@ class BaseEditor extends StatefulWidget {
   final String regExpStr;
   final bool isValueFixed;
   final int? value;
-  final _BaseParams baseParams;
+  final BaseParams baseParams;
   final String errorMsg;
   final ValueBaseCallback callback;
 
-  BaseEditor({
+  const BaseEditor({
     super.key,
     required this.base,
     required this.label,
@@ -245,7 +248,7 @@ class _BaseEditorState extends State<BaseEditor> {
 /// Convert a string in the given base/radix to an integer.
 ///
 /// Return null on invalid entry, but does not check for overflow.
-int? _baseInt(String baseStr, int base, _BaseParams baseParams) {
+int? _baseInt(String baseStr, int base, BaseParams baseParams) {
   final numBits = baseParams.numBits;
   var result = int.tryParse(baseStr, radix: base);
   if (baseParams.useTwosComplement &&
@@ -259,7 +262,7 @@ int? _baseInt(String baseStr, int base, _BaseParams baseParams) {
 }
 
 /// Return true if the given value will overflow.
-bool _baseIsOverflow(int value, _BaseParams baseParams) {
+bool _baseIsOverflow(int value, BaseParams baseParams) {
   final numBits = baseParams.numBits;
   if (baseParams.useTwosComplement) {
     return value >= math.pow(2, numBits - 1) ||
@@ -272,7 +275,7 @@ bool _baseIsOverflow(int value, _BaseParams baseParams) {
 /// Return a string representing the value in the given base.
 ///
 /// Does not check for overflow.
-String _baseStr(int value, int base, _BaseParams baseParams) {
+String _baseStr(int value, int base, BaseParams baseParams) {
   if (value == 0) return '0';
   final numBits = baseParams.numBits;
   final allDigits = '0123456789abcdef'.split('');
@@ -293,13 +296,13 @@ String _baseStr(int value, int base, _BaseParams baseParams) {
   return '$sign${resultDigits.join('')}';
 }
 
-Future<_BaseParams?> _baseParamDialog({
+Future<BaseParams?> _baseParamDialog({
   required BuildContext context,
-  required _BaseParams initParams,
+  required BaseParams initParams,
 }) async {
   var currentBits = initParams.numBits;
   var currentTwosComplement = initParams.useTwosComplement;
-  return showDialog<_BaseParams>(
+  return showDialog<BaseParams>(
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
@@ -323,7 +326,7 @@ Future<_BaseParams?> _baseParamDialog({
                     onChanged: (double value) {
                       currentBits = value.round();
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Number of bits',
                     ),
                   ),
@@ -336,7 +339,7 @@ Future<_BaseParams?> _baseParamDialog({
                   },
                   child: Row(
                     children: <Widget>[
-                      Expanded(
+                      const Expanded(
                         child: Text('Use two\'s complement'),
                       ),
                       Switch(
@@ -360,7 +363,7 @@ Future<_BaseParams?> _baseParamDialog({
             onPressed: () {
               Navigator.pop(
                 context,
-                _BaseParams(
+                BaseParams(
                   numBits: currentBits,
                   useTwosComplement: currentTwosComplement,
                 ),

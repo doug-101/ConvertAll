@@ -1,6 +1,6 @@
 // unit_data.dart, reads and stores unit data.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'dart:convert' show json;
@@ -97,7 +97,9 @@ class UnitDatum {
             factor = value.toDouble();
             equiv = parts.join(' ');
           }
-        } on ExpressionException {}
+        } on ExpressionException {
+          // Ignore exception, it's caught by empty equiv value.
+        }
       }
     }
     if (equiv.isEmpty) throw UnitDataException('Invalid equivalent for $name');
@@ -161,7 +163,7 @@ class UnitSortParam {
 
   /// A stable insertion sort for a unit list.
   void unitStableSort(List<UnitDatum> units) {
-    final start = 0;
+    const start = 0;
     final end = units.length;
     for (var pos = start + 1; pos < end; pos++) {
       var min = start;

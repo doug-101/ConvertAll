@@ -1,6 +1,6 @@
 // help_view.dart, shows Markdown output of the README file and startup tips.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/material.dart';
@@ -13,6 +13,8 @@ const pathPrefix = 'assets/help/';
 
 /// Provides a view with Markdown output of the README file.
 class HelpView extends StatefulWidget {
+  const HelpView({super.key});
+
   @override
   State<HelpView> createState() => _HelpViewState();
 }
@@ -45,14 +47,13 @@ class _HelpViewState extends State<HelpView> {
     final pagePos = _pageList.indexOf(_pageHistory.last);
     // Size placeholder for hidden icons, includes 8/side padding.
     final iconSize = (IconTheme.of(context).size ?? 24.0) + 16.0;
-    return WillPopScope(
-      onWillPop: () async {
-        if (_pageHistory.length > 1) {
+    return PopScope(
+      canPop: _pageHistory.length <= 1,
+      onPopInvoked: (bool didPop) async {
+        if (!didPop) {
           _pageHistory.removeLast();
           _loadContent();
-          return false;
         }
-        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -157,8 +158,8 @@ Future<void> startupTipDialog({
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
                   child: Text(_tipContent),
                 ),
                 InkWell(
@@ -170,7 +171,7 @@ Future<void> startupTipDialog({
                   },
                   child: Row(
                     children: <Widget>[
-                      Expanded(
+                      const Expanded(
                         child: Text('Show this tip at startup'),
                       ),
                       Switch(

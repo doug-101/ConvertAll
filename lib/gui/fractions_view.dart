@@ -16,6 +16,8 @@ const lineHeight = 30.0;
 
 /// Provides a view to do fraction conversions.
 class FractionsView extends StatefulWidget {
+  const FractionsView({super.key});
+
   @override
   State<FractionsView> createState() => _FractionsViewState();
 }
@@ -34,7 +36,7 @@ class _FractionsViewState extends State<FractionsView> {
         title: const Text('Fraction Conversions'),
         leading: IconButton(
           // Manually create button to avoid focus using tab key.
-          icon: BackButtonIcon(),
+          icon: const BackButtonIcon(),
           focusNode: FocusNode(skipTraversal: true),
           onPressed: () {
             Navigator.pop(context);
@@ -52,16 +54,16 @@ class _FractionsViewState extends State<FractionsView> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 TextButton(
-                  child: Text(
-                    usePowerOfTwo
-                        ? 'Limiting denominators to powers of two'
-                        : 'Not limiing denominators to powers of two',
-                  ),
                   focusNode: FocusNode(skipTraversal: true),
                   onPressed: () {
                     usePowerOfTwo = !usePowerOfTwo;
                     asyncResults();
                   },
+                  child: Text(
+                    usePowerOfTwo
+                        ? 'Limiting denominators to powers of two'
+                        : 'Not limiing denominators to powers of two',
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -87,7 +89,10 @@ class _FractionsViewState extends State<FractionsView> {
                           final decimal = Expression(newText).eval();
                           decimalValue = decimal?.toDouble();
                         } on ExpressionException {
-                        } on FormatException {}
+                          // Ignore errors, since will check for null value.
+                        } on FormatException {
+                          // Ignore errors, since will check for null value.
+                        }
                         if (decimalValue == null) {
                           errorText = 'Invalid value';
                         }
@@ -113,7 +118,7 @@ class _FractionsViewState extends State<FractionsView> {
     setState(() {});
     if (decimalValue != null) {
       // Start post-frame to allow editor to update first.
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         _calcOper = CancelableOperation.fromFuture(
           fractionResults(
             decimalValue!,
@@ -132,7 +137,7 @@ class _FractionsViewState extends State<FractionsView> {
 class FractionTable extends StatefulWidget {
   final List<Fraction> results;
 
-  FractionTable({super.key, required this.results});
+  const FractionTable({super.key, required this.results});
 
   @override
   State<FractionTable> createState() => _FractionTableState();
@@ -151,7 +156,7 @@ class _FractionTableState extends State<FractionTable> {
           minHeight: headerHeight + lineHeight,
           maxHeight: headerHeight +
               lineHeight *
-                  (widget.results.length > 0 ? widget.results.length + 0.3 : 1),
+                  (widget.results.isNotEmpty ? widget.results.length + 0.3 : 1),
         ),
         child: Scrollbar(
           controller: _horziScrollCtrl,
@@ -181,8 +186,9 @@ class _FractionTableState extends State<FractionTable> {
                         (BuildContext context, int index) {
                           return Container(
                             alignment: Alignment.center,
-                            constraints:
-                                BoxConstraints.tightFor(height: lineHeight),
+                            constraints: const BoxConstraints.tightFor(
+                              height: lineHeight,
+                            ),
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
@@ -283,6 +289,7 @@ class Fraction {
 
   Fraction(this.numerator, this.denominator);
 
+  @override
   String toString() => '$numerator/$denominator';
 
   String toDecimal() => (numerator / denominator).toString();
@@ -295,8 +302,8 @@ Future<List<Fraction>> fractionResults(
 }) async {
   final results = <Fraction>[];
   if (decimal == 0.0) return results;
-  final denomLimit = 1.0E+9;
-  final minOffset = 1.0E-15;
+  const denomLimit = 1.0E+9;
+  const minOffset = 1.0E-15;
   var denom = 2;
   var numer = (decimal * denom).round();
   var delta = (decimal - numer / denom).abs();

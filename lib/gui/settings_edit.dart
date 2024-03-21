@@ -1,6 +1,6 @@
 // settings_edit.dart, a view to edit the app's preferences.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/foundation.dart';
@@ -14,7 +14,7 @@ import '../model/unit_controller.dart';
 
 /// A user settings view.
 class SettingEdit extends StatefulWidget {
-  SettingEdit({super.key});
+  const SettingEdit({super.key});
 
   @override
   State<SettingEdit> createState() => _SettingEditState();
@@ -27,7 +27,10 @@ class _SettingEditState extends State<SettingEdit> {
   final _formKey = GlobalKey<FormState>();
   final origViewScale = prefs.getDouble('view_scale') ?? 1.0;
 
-  Future<bool> updateOnPop() async {
+  /// Prepare to close by validating and updating.
+  ///
+  /// Returns true if it's ok to close.
+  Future<bool> _handleClose() async {
     if (_cancelFlag) return true;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -54,8 +57,9 @@ class _SettingEditState extends State<SettingEdit> {
           Size(minWidth * viewScale, minHeight * viewScale),
         );
       }
+      if (!mounted) return true;
       final model = Provider.of<UnitController>(context, listen: false);
-      model.notifyListeners();
+      model.generalUpdate();
       final themeModel = Provider.of<ThemeModel>(context, listen: false);
       themeModel.updateTheme();
       return true;
@@ -67,7 +71,7 @@ class _SettingEditState extends State<SettingEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings - ConvertAll'),
+        title: const Text('Settings - ConvertAll'),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
@@ -81,7 +85,14 @@ class _SettingEditState extends State<SettingEdit> {
       ),
       body: Form(
         key: _formKey,
-        onWillPop: updateOnPop,
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          if (await _handleClose() && context.mounted) {
+            // Pop manually (bypass canPop) if update is complete.
+            Navigator.of(context).pop();
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Align(
@@ -105,7 +116,7 @@ class _SettingEditState extends State<SettingEdit> {
                     decoration: const InputDecoration(
                       labelText: 'Result Notation Type',
                     ),
-                    onChanged: (int? value) => null,
+                    onChanged: (int? value) {},
                     onSaved: (int? value) async {
                       if (value != null) {
                         await prefs.setInt('result_notation', value);
@@ -158,6 +169,7 @@ class _SettingEditState extends State<SettingEdit> {
                       if (value != null && value.isNotEmpty) {
                         var intValue = int.parse(value);
                         await prefs.setInt('recent_unit_count', intValue);
+                        if (!context.mounted) return;
                         final model =
                             Provider.of<UnitController>(context, listen: false);
                         if (model.recentUnits.length > intValue) {
@@ -247,14 +259,11 @@ class _SettingEditState extends State<SettingEdit> {
 /// A [FormField] widget for boolean settings.
 class BoolFormField extends FormField<bool> {
   BoolFormField({
-    bool? initialValue,
     String? heading,
-    Key? key,
-    FormFieldSetter<bool>? onSaved,
+    super.initialValue,
+    super.key,
+    super.onSaved,
   }) : super(
-          onSaved: onSaved,
-          initialValue: initialValue,
-          key: key,
           builder: (FormFieldState<bool> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +286,7 @@ class BoolFormField extends FormField<bool> {
                     ],
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 3.0,
                   height: 6.0,
                 ),

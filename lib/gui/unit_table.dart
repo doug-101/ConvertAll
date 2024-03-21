@@ -1,20 +1,18 @@
 // unit_table.dart, provides a data table for unit sselection.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2023, Douglas W. Bell.
+// Copyright (c) 2024, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/unit_controller.dart';
 import '../model/unit_data.dart';
-import '../model/unit_group.dart';
 
 const headerHeight = 40.0;
 const lineHeight = 30.0;
 
 class UnitTable extends StatefulWidget {
-  UnitTable({super.key});
+  const UnitTable({super.key});
 
   @override
   State<UnitTable> createState() => _UnitTableState();
@@ -55,7 +53,7 @@ class _UnitTableState extends State<UnitTable> {
               minHeight: headerHeight + lineHeight,
               maxHeight: headerHeight +
                   lineHeight *
-                      (unitList.length > 0 ? unitList.length + 0.3 : 1),
+                      (unitList.isNotEmpty ? unitList.length + 0.3 : 1),
             ),
             child: Scrollbar(
               controller: _horziScrollCtrl,
@@ -107,7 +105,7 @@ class _UnitTableState extends State<UnitTable> {
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
-                                  constraints: BoxConstraints.tightFor(
+                                  constraints: const BoxConstraints.tightFor(
                                       height: lineHeight),
                                   decoration: BoxDecoration(
                                     border: Border(
