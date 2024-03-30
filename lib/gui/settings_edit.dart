@@ -237,6 +237,22 @@ class _SettingEditState extends State<SettingEdit> {
                         }
                       },
                     ),
+                  if (!kIsWeb &&
+                      (defaultTargetPlatform == TargetPlatform.linux ||
+                          defaultTargetPlatform == TargetPlatform.windows ||
+                          defaultTargetPlatform == TargetPlatform.macOS))
+                    BoolFormField(
+                      initialValue: prefs.getBool('show_title_bar') ?? true,
+                      heading: 'Show the Window Title Bar',
+                      onSaved: (bool? value) async {
+                        if (value != null) {
+                          await prefs.setBool('show_title_bar', value);
+                          await windowManager.setTitleBarStyle(
+                            value ? TitleBarStyle.normal : TitleBarStyle.hidden,
+                          );
+                        }
+                      },
+                    ),
                   BoolFormField(
                     initialValue: prefs.getBool('dark_theme') ?? false,
                     heading: 'Use dark color theme',

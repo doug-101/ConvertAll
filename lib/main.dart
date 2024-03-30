@@ -63,10 +63,16 @@ Future<void> main() async {
       offsetX = prefs.getDouble('win_pos_x');
       offsetY = prefs.getDouble('win_pos_y');
     }
-    // Setting the size twice (early and later) to work around linux problems.
+    // Setting size, etc. twice (early & later) to work around linux problems.
+    if (!(prefs.getBool('show_title_bar') ?? true)) {
+      await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+    }
     await windowManager.setSize(size);
     windowManager.waitUntilReadyToShow(null, () async {
       await windowManager.setTitle('ConvertAll');
+      if (!(prefs.getBool('show_title_bar') ?? true)) {
+        await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+      }
       await windowManager.setMinimumSize(
         Size(minWidth * viewScale, minHeight * viewScale),
       );
