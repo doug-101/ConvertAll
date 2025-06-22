@@ -101,9 +101,7 @@ class _FractionsViewState extends State<FractionsView> {
                     },
                   ),
                 ),
-                Expanded(
-                  child: FractionTable(results: results),
-                ),
+                Expanded(child: FractionTable(results: results)),
               ],
             ),
           ),
@@ -119,15 +117,13 @@ class _FractionsViewState extends State<FractionsView> {
     if (decimalValue != null) {
       // Start post-frame to allow editor to update first.
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _calcOper = CancelableOperation.fromFuture(
-          fractionResults(
-            decimalValue!,
-            powerOfTwo: usePowerOfTwo,
-          ),
-        ).then((calcResults) {
-          results.addAll(calcResults);
-          setState(() {});
-        });
+        _calcOper =
+            CancelableOperation.fromFuture(
+              fractionResults(decimalValue!, powerOfTwo: usePowerOfTwo),
+            ).then((calcResults) {
+              results.addAll(calcResults);
+              setState(() {});
+            });
       });
     }
   }
@@ -154,7 +150,8 @@ class _FractionTableState extends State<FractionTable> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: headerHeight + lineHeight,
-          maxHeight: headerHeight +
+          maxHeight:
+              headerHeight +
               lineHeight *
                   (widget.results.isNotEmpty ? widget.results.length + 0.3 : 1),
         ),
@@ -192,7 +189,8 @@ class _FractionTableState extends State<FractionTable> {
                             decoration: BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
-                                    color: Theme.of(context).dividerColor),
+                                  color: Theme.of(context).dividerColor,
+                                ),
                               ),
                               color: Theme.of(context).colorScheme.surface,
                             ),
@@ -204,9 +202,9 @@ class _FractionTableState extends State<FractionTable> {
                                   child: Text(
                                     widget.results[index].toString(),
                                     style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -215,9 +213,9 @@ class _FractionTableState extends State<FractionTable> {
                                   child: Text(
                                     widget.results[index].toDecimal(),
                                     style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -251,9 +249,13 @@ class _FractionTableHeader extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final textStyle =
-        TextStyle(color: Theme.of(context).colorScheme.onSecondary);
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onSecondary,
+    );
     return Container(
       color: Theme.of(context).colorScheme.secondary,
       alignment: Alignment.center,

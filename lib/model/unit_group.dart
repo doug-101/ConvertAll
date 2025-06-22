@@ -65,19 +65,23 @@ class UnitGroup implements UnitItem {
           match = matches.removeAt(0);
         }
       } else {
-        unitItems.add(UnitAtom.parse(
-          unitString: groupString.substring(startPos, match.start).trim(),
-          negativeExp: negativeExp,
-        ));
+        unitItems.add(
+          UnitAtom.parse(
+            unitString: groupString.substring(startPos, match.start).trim(),
+            negativeExp: negativeExp,
+          ),
+        );
       }
       startPos = match.end;
       negativeExp = matchText == '/';
     }
     if (unitItems.isEmpty || unitItems.last is UnitAtom) {
-      unitItems.add(UnitAtom.parse(
-        unitString: groupString.substring(startPos).trim(),
-        negativeExp: negativeExp,
-      ));
+      unitItems.add(
+        UnitAtom.parse(
+          unitString: groupString.substring(startPos).trim(),
+          negativeExp: negativeExp,
+        ),
+      );
     }
   }
 
@@ -142,8 +146,10 @@ class UnitGroup implements UnitItem {
   UnitAtom? unitAtPosition(int pos) {
     if (unitItems.isEmpty) return null;
     final text = toString();
-    final proceedingText =
-        text.substring(0, pos < text.length ? pos : text.length);
+    final proceedingText = text.substring(
+      0,
+      pos < text.length ? pos : text.length,
+    );
     final unitNum = RegExp(r'[\*/]').allMatches(proceedingText).length;
     final unitList = _flatUnitList();
     return unitList[unitNum < unitList.length ? unitNum : unitList.length - 1];
@@ -238,9 +244,11 @@ class UnitGroup implements UnitItem {
         factor *= math.pow(unit.unitMatch!.factor, unit.unitExp);
       }
     }
-    rawReducedList.sort((a, b) => a.unitMatch!.name
-        .toLowerCase()
-        .compareTo(b.unitMatch!.name.toLowerCase()));
+    rawReducedList.sort(
+      (a, b) => a.unitMatch!.name.toLowerCase().compareTo(
+        b.unitMatch!.name.toLowerCase(),
+      ),
+    );
     final reducedList = <UnitAtom>[];
     for (var unit in rawReducedList) {
       if (reducedList.isNotEmpty &&
@@ -250,10 +258,12 @@ class UnitGroup implements UnitItem {
         reducedList.add(unit);
       }
     }
-    reducedList.removeWhere((unit) =>
-        unit.unitMatch!.equiv == '!!' ||
-        unit.unitMatch!.name == 'unit' ||
-        unit.unitExp == 0);
+    reducedList.removeWhere(
+      (unit) =>
+          unit.unitMatch!.equiv == '!!' ||
+          unit.unitMatch!.name == 'unit' ||
+          unit.unitExp == 0,
+    );
     reducedGroup = UnitGroup();
     reducedGroup!.unitItems.addAll(reducedList);
   }
@@ -317,7 +327,8 @@ class UnitGroup implements UnitItem {
       dataList.sort((a, b) => a[0].compareTo(b[0]));
       var pos = dataList.indexWhere((pair) => value <= pair[0]);
       if (pos == 0) pos = 1;
-      result = (value - dataList[pos - 1][0]) /
+      result =
+          (value - dataList[pos - 1][0]) /
               (dataList[pos][0] - dataList[pos - 1][0]) *
               (dataList[pos][1] - dataList[pos - 1][1]) +
           dataList[pos - 1][1];
@@ -345,10 +356,7 @@ class UnitAtom implements UnitItem {
     required this.isExpValid,
   });
 
-  UnitAtom.parse({
-    required String unitString,
-    negativeExp = false,
-  }) {
+  UnitAtom.parse({required String unitString, negativeExp = false}) {
     final parts = unitString.split('^');
     if (parts.length > 1) {
       if (parts.length > 2) {
@@ -387,16 +395,18 @@ class UnitAtom implements UnitItem {
     unitMatch = unitData.unitMatch(unitText);
     if (unitMatch == null) {
       if (unitText.endsWith('2') || unitText.endsWith('3')) {
-        final tmpMatch =
-            unitData.unitMatch(unitText.substring(0, unitText.length - 1));
+        final tmpMatch = unitData.unitMatch(
+          unitText.substring(0, unitText.length - 1),
+        );
         if (tmpMatch != null && unitExp == 1 && partialExp == null) {
           unitMatch = tmpMatch;
           unitExp = unitText.endsWith('2') ? 2 : 3;
         }
       } else if ((unitText.endsWith('s') || unitText.endsWith('S')) &&
           unitData.partialMatches(unitText).isEmpty) {
-        unitMatch =
-            unitData.unitMatch(unitText.substring(0, unitText.length - 1));
+        unitMatch = unitData.unitMatch(
+          unitText.substring(0, unitText.length - 1),
+        );
       }
     }
     if (negativeExp) {

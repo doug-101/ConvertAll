@@ -31,8 +31,9 @@ class _HelpViewState extends State<HelpView> {
   }
 
   void _loadContent() async {
-    _currentContent =
-        await rootBundle.loadString(pathPrefix + _pageHistory.last);
+    _currentContent = await rootBundle.loadString(
+      pathPrefix + _pageHistory.last,
+    );
     // Initialize _pageList once with link addresses from contents page.
     if (_pageList.isEmpty) {
       for (var match in RegExp(r'\[.+\]\((.+)\)').allMatches(_currentContent)) {
@@ -78,10 +79,7 @@ class _HelpViewState extends State<HelpView> {
                 },
               ),
             ] else ...[
-              SizedBox(
-                width: iconSize,
-                height: 1.0,
-              ),
+              SizedBox(width: iconSize, height: 1.0),
             ],
             if (_pageHistory.last != _pageHistory.first) ...[
               IconButton(
@@ -93,10 +91,7 @@ class _HelpViewState extends State<HelpView> {
                 },
               ),
             ] else ...[
-              SizedBox(
-                width: iconSize,
-                height: 1.0,
-              ),
+              SizedBox(width: iconSize, height: 1.0),
             ],
             IconButton(
               icon: const Icon(Icons.close),
@@ -140,19 +135,14 @@ Any of the following can be typed:
  * or any other combinations
 ''';
 
-Future<void> startupTipDialog({
-  required BuildContext context,
-}) async {
+Future<void> startupTipDialog({required BuildContext context}) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
       var showTip = true;
       return AlertDialog(
-        title: const Text(
-          'Tip: Combining Units',
-          textAlign: TextAlign.center,
-        ),
+        title: const Text('Tip: Combining Units', textAlign: TextAlign.center),
         content: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Column(
@@ -171,9 +161,7 @@ Future<void> startupTipDialog({
                   },
                   child: Row(
                     children: <Widget>[
-                      const Expanded(
-                        child: Text('Show this tip at startup'),
-                      ),
+                      const Expanded(child: Text('Show this tip at startup')),
                       Switch(
                         value: showTip,
                         onChanged: (bool value) {

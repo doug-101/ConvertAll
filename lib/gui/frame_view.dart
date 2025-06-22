@@ -122,29 +122,31 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                 ),
                 const Divider(),
                 ListTile(
-                    leading: const Icon(Icons.numbers),
-                    title: const Text('Bases'),
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const BasesView(),
-                        ),
-                      );
-                    }),
+                  leading: const Icon(Icons.numbers),
+                  title: const Text('Bases'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BasesView(),
+                      ),
+                    );
+                  },
+                ),
                 ListTile(
-                    leading: const Icon(Icons.pie_chart),
-                    title: const Text('Fractions'),
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FractionsView(),
-                        ),
-                      );
-                    }),
+                  leading: const Icon(Icons.pie_chart),
+                  title: const Text('Fractions'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FractionsView(),
+                      ),
+                    );
+                  },
+                ),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.help_outline),
@@ -153,9 +155,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     Navigator.pop(context);
                     await Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const HelpView(),
-                      ),
+                      MaterialPageRoute(builder: (context) => const HelpView()),
                     );
                   },
                 ),
@@ -228,10 +228,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     },
                     itemBuilder: (context) => [
                       for (var type in UnitController.unitData.typeList)
-                        PopupMenuItem<String>(
-                          value: type,
-                          child: Text(type),
-                        ),
+                        PopupMenuItem<String>(value: type, child: Text(type)),
                     ],
                   ),
                 ),
@@ -263,16 +260,13 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                         PopupMenuItem<String>(
                           value: unitText,
                           child: Text(unitText),
-                        )
+                        ),
                     ],
                   ),
                 ),
               ] else ...[
                 // Reserve space for hidden recent icon if not present.
-                SizedBox(
-                  width: iconSize,
-                  height: 1.0,
-                ),
+                SizedBox(width: iconSize, height: 1.0),
               ],
             ],
           ),
@@ -310,16 +304,8 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Flexible(
-                          child: UnitValueEditor(
-                            isFrom: true,
-                          ),
-                        ),
-                        Flexible(
-                          child: UnitValueEditor(
-                            isFrom: false,
-                          ),
-                        ),
+                        Flexible(child: UnitValueEditor(isFrom: true)),
+                        Flexible(child: UnitValueEditor(isFrom: false)),
                       ],
                     ),
                     Padding(

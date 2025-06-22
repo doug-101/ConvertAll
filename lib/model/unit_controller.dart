@@ -73,8 +73,9 @@ class UnitController extends ChangeNotifier {
   /// Replace the current unit in the active unit group.
   void replaceCurrentUnit(UnitDatum newUnit) {
     if (newUnit != currentUnit?.unitMatch) {
-      final currentGroup =
-          activeEditor == ActiveEditor.fromEdit ? fromUnit : toUnit;
+      final currentGroup = activeEditor == ActiveEditor.fromEdit
+          ? fromUnit
+          : toUnit;
       currentUnit = currentGroup.replaceUnit(currentUnit, newUnit);
       highlightedTableUnit = null;
       updateUnitCalc();
@@ -83,8 +84,9 @@ class UnitController extends ChangeNotifier {
 
   /// Replace the current unit group with the provided text.
   void replaceCurrentGroup(String unitText) {
-    final currentGroup =
-        activeEditor == ActiveEditor.fromEdit ? fromUnit : toUnit;
+    final currentGroup = activeEditor == ActiveEditor.fromEdit
+        ? fromUnit
+        : toUnit;
     currentGroup.parse(unitText);
     highlightedTableUnit = null;
     updateUnitCalc();
@@ -108,7 +110,8 @@ class UnitController extends ChangeNotifier {
         addRecentUnits(toUnit.toString());
         addRecentUnits(fromUnit.toString());
       } else {
-        statusString = 'Units are not compatible ( ${fromUnit.reducedGroup} '
+        statusString =
+            'Units are not compatible ( ${fromUnit.reducedGroup} '
             ' vs.  ${toUnit.reducedGroup} )';
       }
     }

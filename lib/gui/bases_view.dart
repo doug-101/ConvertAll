@@ -181,15 +181,17 @@ class _BaseEditorState extends State<BaseEditor> {
   @override
   void initState() {
     super.initState();
-    _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
-      if (event is KeyDownEvent) {
-        if (event.logicalKey == LogicalKeyboardKey.tab) {
-          // Catch tab key to do a select all in the next tab field.
-          _BaseEditorState.tabPressFlag = true;
+    _editorFocusNode = FocusNode(
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.tab) {
+            // Catch tab key to do a select all in the next tab field.
+            _BaseEditorState.tabPressFlag = true;
+          }
         }
-      }
-      return KeyEventResult.ignored;
-    });
+        return KeyEventResult.ignored;
+      },
+    );
     _editorFocusNode.addListener(() {
       if (_editorFocusNode.hasFocus) {
         if (_BaseEditorState.tabPressFlag) {
@@ -214,8 +216,11 @@ class _BaseEditorState extends State<BaseEditor> {
   Widget build(BuildContext context) {
     if (!widget.isValueFixed) {
       if (widget.value != null) {
-        _editController.text =
-            _baseStr(widget.value!, widget.base, widget.baseParams);
+        _editController.text = _baseStr(
+          widget.value!,
+          widget.base,
+          widget.baseParams,
+        );
       } else {
         _editController.text = '';
       }
@@ -233,9 +238,7 @@ class _BaseEditorState extends State<BaseEditor> {
         focusNode: _editorFocusNode,
         autofocus: true,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(
-            RegExp(widget.regExpStr),
-          ),
+          FilteringTextInputFormatter.allow(RegExp(widget.regExpStr)),
         ],
         onChanged: (String newText) {
           widget.callback(newText, widget.base);
@@ -339,9 +342,7 @@ Future<BaseParams?> _baseParamDialog({
                   },
                   child: Row(
                     children: <Widget>[
-                      const Expanded(
-                        child: Text('Use two\'s complement'),
-                      ),
+                      const Expanded(child: Text('Use two\'s complement')),
                       Switch(
                         value: currentTwosComplement,
                         onChanged: (bool value) {

@@ -124,8 +124,8 @@ class _SettingEditState extends State<SettingEdit> {
                     },
                   ),
                   TextFormField(
-                    initialValue:
-                        (prefs.getInt('num_dec_plcs') ?? 8).toString(),
+                    initialValue: (prefs.getInt('num_dec_plcs') ?? 8)
+                        .toString(),
                     decoration: const InputDecoration(
                       labelText: 'Number of Decimal Places',
                     ),
@@ -148,8 +148,8 @@ class _SettingEditState extends State<SettingEdit> {
                     },
                   ),
                   TextFormField(
-                    initialValue:
-                        (prefs.getInt('recent_unit_count') ?? 12).toString(),
+                    initialValue: (prefs.getInt('recent_unit_count') ?? 12)
+                        .toString(),
                     decoration: const InputDecoration(
                       labelText: 'Number of saved recent units',
                     ),
@@ -170,11 +170,15 @@ class _SettingEditState extends State<SettingEdit> {
                         var intValue = int.parse(value);
                         await prefs.setInt('recent_unit_count', intValue);
                         if (!context.mounted) return;
-                        final model =
-                            Provider.of<UnitController>(context, listen: false);
+                        final model = Provider.of<UnitController>(
+                          context,
+                          listen: false,
+                        );
                         if (model.recentUnits.length > intValue) {
-                          model.recentUnits
-                              .removeRange(intValue, model.recentUnits.length);
+                          model.recentUnits.removeRange(
+                            intValue,
+                            model.recentUnits.length,
+                          );
                         }
                       }
                     },
@@ -198,8 +202,8 @@ class _SettingEditState extends State<SettingEdit> {
                     },
                   ),
                   TextFormField(
-                    initialValue:
-                        (prefs.getDouble('view_scale') ?? 1.0).toString(),
+                    initialValue: (prefs.getDouble('view_scale') ?? 1.0)
+                        .toString(),
                     decoration: const InputDecoration(
                       labelText: 'App view scale ratio',
                     ),
@@ -218,7 +222,9 @@ class _SettingEditState extends State<SettingEdit> {
                     onSaved: (String? value) async {
                       if (value != null && value.isNotEmpty) {
                         await prefs.setDouble(
-                            'view_scale', double.parse(value));
+                          'view_scale',
+                          double.parse(value),
+                        );
                       }
                     },
                   ),
@@ -274,40 +280,31 @@ class _SettingEditState extends State<SettingEdit> {
 
 /// A [FormField] widget for boolean settings.
 class BoolFormField extends FormField<bool> {
-  BoolFormField({
-    String? heading,
-    super.initialValue,
-    super.key,
-    super.onSaved,
-  }) : super(
-          builder: (FormFieldState<bool> state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    state.didChange(!state.value!);
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(heading ?? 'Boolean Value'),
-                      ),
-                      Switch(
-                        value: state.value!,
-                        onChanged: (bool value) {
-                          state.didChange(!state.value!);
-                        },
-                      ),
-                    ],
-                  ),
+  BoolFormField({String? heading, super.initialValue, super.key, super.onSaved})
+    : super(
+        builder: (FormFieldState<bool> state) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  state.didChange(!state.value!);
+                },
+                child: Row(
+                  children: <Widget>[
+                    Expanded(child: Text(heading ?? 'Boolean Value')),
+                    Switch(
+                      value: state.value!,
+                      onChanged: (bool value) {
+                        state.didChange(!state.value!);
+                      },
+                    ),
+                  ],
                 ),
-                const Divider(
-                  thickness: 3.0,
-                  height: 6.0,
-                ),
-              ],
-            );
-          },
-        );
+              ),
+              const Divider(thickness: 3.0, height: 6.0),
+            ],
+          );
+        },
+      );
 }

@@ -55,9 +55,7 @@ class ThemeModel extends ChangeNotifier {
       foregroundColor: Colors.white,
     ),
     inputDecorationTheme: const InputDecorationTheme(
-      labelStyle: TextStyle(
-        color: Colors.black,
-      ),
+      labelStyle: TextStyle(color: Colors.black),
     ),
     useMaterial3: true,
   );
@@ -96,9 +94,7 @@ class ThemeModel extends ChangeNotifier {
       foregroundColor: Color(0xff00b4d8),
     ),
     inputDecorationTheme: const InputDecorationTheme(
-      labelStyle: TextStyle(
-        color: Colors.white,
-      ),
+      labelStyle: TextStyle(color: Colors.white),
     ),
     useMaterial3: true,
   );

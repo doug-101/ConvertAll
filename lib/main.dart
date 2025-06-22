@@ -55,7 +55,8 @@ Future<void> main() async {
     var size = const Size(_stdWidth, _stdHeight) * viewScale;
     double? offsetX, offsetY;
     if (prefs.getBool('save_window_geo') ?? true) {
-      size = Size(
+      size =
+          Size(
             prefs.getDouble('win_size_x') ?? _stdWidth,
             prefs.getDouble('win_size_y') ?? _stdHeight,
           ) *
@@ -112,10 +113,7 @@ Widget _stdRootApp({required Widget child}) {
   return FractionallySizedBox(
     widthFactor: 1 / ratio,
     heightFactor: 1 / ratio,
-    child: Transform.scale(
-      scale: ratio,
-      child: child,
-    ),
+    child: Transform.scale(scale: ratio, child: child),
   );
 }
 

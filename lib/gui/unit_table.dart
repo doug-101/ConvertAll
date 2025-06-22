@@ -51,7 +51,8 @@ class _UnitTableState extends State<UnitTable> {
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: headerHeight + lineHeight,
-              maxHeight: headerHeight +
+              maxHeight:
+                  headerHeight +
                   lineHeight *
                       (unitList.isNotEmpty ? unitList.length + 0.3 : 1),
             ),
@@ -88,16 +89,12 @@ class _UnitTableState extends State<UnitTable> {
                                   unit == model.highlightedTableUnit;
                               final textStyle = TextStyle(
                                 color: isSelected
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer
+                                    ? Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer
                                     : isActive
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .surfaceTint
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                    ? Theme.of(context).colorScheme.surfaceTint
+                                    : Theme.of(context).colorScheme.onSurface,
                               );
                               return GestureDetector(
                                 onTap: () {
@@ -106,17 +103,18 @@ class _UnitTableState extends State<UnitTable> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   constraints: const BoxConstraints.tightFor(
-                                      height: lineHeight),
+                                    height: lineHeight,
+                                  ),
                                   decoration: BoxDecoration(
                                     border: Border(
                                       bottom: BorderSide(
-                                          color:
-                                              Theme.of(context).dividerColor),
+                                        color: Theme.of(context).dividerColor,
+                                      ),
                                     ),
                                     color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.primaryContainer
                                         : Theme.of(context).colorScheme.surface,
                                   ),
                                   child: Row(
@@ -176,9 +174,13 @@ class _UnitTableHeader extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final textStyle =
-        TextStyle(color: Theme.of(context).colorScheme.onSecondary);
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onSecondary,
+    );
     return Consumer<UnitController>(
       builder: (context, model, child) {
         return Container(

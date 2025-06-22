@@ -31,8 +31,9 @@ class UnitData {
 
   Future<void> loadData() async {
     final typeSet = <String>{};
-    final List<dynamic> dataList =
-        json.decode(await rootBundle.loadString('assets/units.json'));
+    final List<dynamic> dataList = json.decode(
+      await rootBundle.loadString('assets/units.json'),
+    );
     for (var item in dataList) {
       final unit = UnitDatum(item);
       unitList.add(unit);
@@ -51,8 +52,9 @@ class UnitData {
   /// Return all units with words staring with the given words.
   List<UnitDatum> partialMatches(String searchTerm, {bool canFilter = false}) {
     final wordList = searchTerm.toLowerCase().split(' ');
-    final availUnits =
-        (canFilter && filteredUnits.isNotEmpty) ? filteredUnits : unitList;
+    final availUnits = (canFilter && filteredUnits.isNotEmpty)
+        ? filteredUnits
+        : unitList;
     return List.of(availUnits.where((unit) => unit.isPartialMatch(wordList)));
   }
 
@@ -81,13 +83,13 @@ class UnitDatum {
   final searchTerms = <String>[];
 
   UnitDatum(dynamic dataList)
-      : name = dataList['name'],
-        type = dataList['type'],
-        equiv = dataList['equiv'],
-        fromEqn = dataList['fromeqn'] ?? '',
-        toEqn = dataList['toeqn'] ?? '',
-        unabbrev = dataList['unabbrev'] ?? '',
-        comment = dataList['comment'] ?? '' {
+    : name = dataList['name'],
+      type = dataList['type'],
+      equiv = dataList['equiv'],
+      fromEqn = dataList['fromeqn'] ?? '',
+      toEqn = dataList['toeqn'] ?? '',
+      unabbrev = dataList['unabbrev'] ?? '',
+      comment = dataList['comment'] ?? '' {
     if (fromEqn.isEmpty) {
       final parts = equiv.split(' ');
       if (parts.length > 1) {
@@ -171,8 +173,9 @@ class UnitSortParam {
       var unit = units[pos];
       while (min < max) {
         final mid = min + ((max - min) >> 1);
-        var comparison =
-            unit.sortKey(sortField).compareTo(units[mid].sortKey(sortField));
+        var comparison = unit
+            .sortKey(sortField)
+            .compareTo(units[mid].sortKey(sortField));
         if (!sortForward) comparison = -comparison;
         if (comparison < 0) {
           max = mid;

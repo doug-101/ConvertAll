@@ -26,15 +26,17 @@ class _UnitValueEditorState extends State<UnitValueEditor> {
   void initState() {
     super.initState();
     final model = Provider.of<UnitController>(context, listen: false);
-    _editorFocusNode = FocusNode(onKeyEvent: (node, event) {
-      if (event is KeyDownEvent) {
-        if (event.logicalKey == LogicalKeyboardKey.tab) {
-          // Catch tab key to do a select all in the next tab field.
-          model.tabPressFlag = true;
+    _editorFocusNode = FocusNode(
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.tab) {
+            // Catch tab key to do a select all in the next tab field.
+            model.tabPressFlag = true;
+          }
         }
-      }
-      return KeyEventResult.ignored;
-    });
+        return KeyEventResult.ignored;
+      },
+    );
     _editorFocusNode.addListener(() {
       if (_editorFocusNode.hasFocus) {
         if (model.tabPressFlag) {
