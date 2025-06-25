@@ -2,7 +2,7 @@
 
 # ca_make.sh, a Linux build/install tool for ConvertAll.
 # ConvertAll, a versatile unit conversion program.
-# Copyright (c) 2023, Douglas W. Bell.
+# Copyright (c) 2025, Douglas W. Bell.
 # Free software, GPL v2 or later.
 
 depends_error () {
@@ -15,9 +15,14 @@ depends_error () {
     echo "    curl"
     echo "    git"
     echo "    GTK development headers"
+    echo "    Mesa OpenGL utility library"
     echo "    Ninja build"
     echo "    pkg-config"
+    echo "    standard C++ development headers"
+    echo "    unzip"
     echo "    XZ development headers"
+    echo "    XZ utilities"
+    echo "    zip"
     echo
     exit 1
 }
@@ -42,18 +47,20 @@ case "$1" in
         if [ -x "$(command -v apt-get)" ]; then
             echo "Detected 'apt-get' (Debian-based system)"
             echo
-            apt-get -y install clang cmake curl git libgtk-3-dev ninja-build \
-                pkgconf liblzma-dev || depends_error
+            apt-get -y install clang cmake curl git libgtk-3-dev libglu1-mesa \
+                ninja-build pkgconf libstdc++-12-dev unzip liblzma-dev \
+                xz-utils zip || depends_error
         elif [ -x "$(command -v dnf)" ]; then
             echo "Detected 'dnf' (Fedora-based system)"
             echo
-            dnf -y install clang cmake curl git gtk3-devel ninja-build \
-                pkgconf xz-devel || depends_error
+            dnf -y install clang cmake curl git gtk3-devel mesa-libGLU \
+                ninja-build pkgconf libstdc++-devel unzip xz-devel xz \
+                zip || depends_error
         elif [ -x "$(command -v pacman)" ]; then
             echo "Detected 'pacman' (Arch-based system)"
             echo
-            pacman -S --needed --noconfirm clang cmake curl git gtk3 ninja \
-                pkgconf xz || depends_error
+            pacman -S --needed --noconfirm clang cmake curl git gtk3 glu \
+                ninja pkgconf libc++ unzip xz zip || depends_error
         else
             echo "Could not find a supported package manager"
             depends_error
@@ -67,7 +74,7 @@ case "$1" in
         echo "Downloading Flutter..."
         flutter_site="https://storage.googleapis.com"
         flutter_path="/flutter_infra_release/releases/stable/linux/"
-        flutter_file="flutter_linux_3.19.4-stable.tar.xz"
+        flutter_file="flutter_linux_3.32.4-stable.tar.xz"
         curl -O $flutter_site$flutter_path$flutter_file \
             || misc_error "Error:  Could not download Flutter"
         echo
@@ -102,6 +109,9 @@ case "$1" in
         echo "Copy done"
         echo
         echo "Creating symlinks..."
+        mkdir -p -m 755 /usr/local/share/applications \
+            || misc_error \
+            "Could not create '/usr/local/share/applications' directory"
         ln -sf /opt/convertall/convertall /usr/local/bin/. \
             && ln -sf /opt/convertall/convertall.desktop \
             /usr/local/share/applications/. \

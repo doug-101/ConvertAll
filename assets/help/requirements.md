@@ -28,9 +28,14 @@ system:
 * curl
 * git
 * GTK development headers
+* Mesa OpenGL utility library
 * Ninja build
 * pkg-config
+* standard C++ development headers
+* unzip
 * XZ development headers
+* XZ utilities
+* zip
 
 ---
 
