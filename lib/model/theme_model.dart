@@ -1,6 +1,6 @@
 // theme_model.dart, retrieves and updates light and dark color themes.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2025, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/material.dart';
@@ -38,14 +38,13 @@ class ThemeModel extends ChangeNotifier {
       // Tertiary Container used for text field editor labels (if inactive).
       tertiaryContainer: Color(0xff023e8a),
       onTertiaryContainer: Color(0xffadb5bd),
-      // Background is used for static background areas.
-      background: Color(0xfff3d5b5),
-      onBackground: Colors.black,
-      // Surface used for field editors and tables (if active).
-      surface: Color(0xffffedd8),
+      // Surface is used for static background areas.
+      surface: Color(0xfff3d5b5),
       onSurface: Colors.black,
+      // Surface used for field editors and tables (if active).
+      surfaceContainer: Color(0xffffedd8),
       // Surface used for field editors (if inactive).
-      surfaceVariant: Color(0xffffedd8),
+      surfaceContainerHighest: Color(0xffffedd8),
       onSurfaceVariant: Color(0xffcccccc),
       // Used on a surface for highlighted (not selected) items.
       surfaceTint: Color(0xff0077b6),
@@ -77,14 +76,13 @@ class ThemeModel extends ChangeNotifier {
       // Tertiary Container used for text field editor labels (if inactive).
       tertiaryContainer: Color(0xff023e8a),
       onTertiaryContainer: Color(0xffadb5bd),
-      // Background is used for static background areas.
-      background: Color(0xff343a40),
-      onBackground: Colors.black,
+      // Surface is used for static background areas.
+      surface: Color(0xff343a40),
+      onSurface: Colors.white,
       // Surface used for field editors and tables (if active).
-      surface: Color(0xff212529),
-      onSurface: Color(0xffe9ecef),
+      surfaceContainer: Color(0xff212529),
       // Surface used for field editors (if inactive).
-      surfaceVariant: Color(0xff212529),
+      surfaceContainerHighest: Color(0xff212529),
       onSurfaceVariant: Color(0xff444444),
       // Used on a surface for highlighted (not selected) items.
       surfaceTint: Color(0xff0077b6),

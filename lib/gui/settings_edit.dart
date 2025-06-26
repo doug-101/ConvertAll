@@ -1,6 +1,6 @@
 // settings_edit.dart, a view to edit the app's preferences.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2025, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/foundation.dart';
@@ -86,7 +86,7 @@ class _SettingEditState extends State<SettingEdit> {
       body: Form(
         key: _formKey,
         canPop: false,
-        onPopInvoked: (didPop) async {
+        onPopInvokedWithResult: (bool didPop, Object? result) async {
           if (didPop) return;
           if (await _handleClose() && context.mounted) {
             // Pop manually (bypass canPop) if update is complete.

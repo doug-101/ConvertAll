@@ -1,6 +1,6 @@
 // common_widgets.dart, provides various customized widgets.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2025, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/material.dart';
@@ -55,8 +55,8 @@ class LabelledTextEditor extends StatelessWidget {
               border: const OutlineInputBorder(),
               filled: true,
               fillColor: enabled
-                  ? Theme.of(context).colorScheme.surface
-                  : Theme.of(context).colorScheme.surfaceVariant,
+                  ? Theme.of(context).colorScheme.surfaceContainer
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
             style: TextStyle(
               color: enabled

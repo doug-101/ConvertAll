@@ -1,6 +1,6 @@
 // help_view.dart, shows Markdown output of the README file and startup tips.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2025, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'package:flutter/material.dart';
@@ -50,7 +50,7 @@ class _HelpViewState extends State<HelpView> {
     final iconSize = (IconTheme.of(context).size ?? 24.0) + 16.0;
     return PopScope(
       canPop: _pageHistory.length <= 1,
-      onPopInvoked: (bool didPop) async {
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
         if (!didPop) {
           _pageHistory.removeLast();
           _loadContent();
