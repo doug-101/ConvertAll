@@ -1,6 +1,6 @@
 // unit_data.dart, reads and stores unit data.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2025, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 import 'dart:convert' show json;
@@ -41,7 +41,7 @@ class UnitData {
       typeSet.add(unit.type);
     }
     typeList.addAll(typeSet);
-    typeList.sort();
+    typeList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   }
 
   /// Return an exact match for the given unit name.
