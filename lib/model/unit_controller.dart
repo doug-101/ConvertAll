@@ -93,7 +93,7 @@ class UnitController extends ChangeNotifier {
   }
 
   /// Clear entered units.
-  void claerUnits() {
+  void clearUnits() {
     fromUnit.clearUnit();
     toUnit.clearUnit();
     updateUnitCalc();

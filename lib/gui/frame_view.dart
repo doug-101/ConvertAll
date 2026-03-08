@@ -211,7 +211,7 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                 focusNode: FocusNode(skipTraversal: true),
                 onPressed: () {
                   _fromEditorFocusNode.requestFocus();
-                  model.claerUnits();
+                  model.clearUnits();
                 },
               ),
               if (!model.isFilteringUnitData) ...[
