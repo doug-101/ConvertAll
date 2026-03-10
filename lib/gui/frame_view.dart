@@ -182,8 +182,9 @@ class _FrameViewState extends State<FrameView> with WindowListener {
                     );
                   },
                 ),
-                if (defaultTargetPlatform == TargetPlatform.linux ||
-                    defaultTargetPlatform == TargetPlatform.macOS) ...[
+                if (!kIsWeb &&
+                    (defaultTargetPlatform == TargetPlatform.linux ||
+                        defaultTargetPlatform == TargetPlatform.macOS)) ...[
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.highlight_off_outlined),

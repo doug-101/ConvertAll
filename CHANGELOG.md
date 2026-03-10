@@ -6,10 +6,12 @@
 - Added physics units: elementary charge, Planck length, Planck mass, Planck
   time, and Planck temperature.
 - Added constants for vacuum permittivity and the Boltzmann constant.
+- Update the Android build to fully support Android 16 features.
+- Update the web version to support WebAssembly when available.
 
 ### Bug Fixes:
 - Updated an external library in order to fix an incorrect non-linear
-  temperature coversion at zero degrees.
+  temperature conversion at zero degrees.
 
 ---
 ## June 27, 2025 - Release 1.0.2
