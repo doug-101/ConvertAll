@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "org.bellz.convertall"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -48,8 +48,8 @@ android {
 
     defaultConfig {
         applicationId "org.bellz.convertall"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        minSdkVersion 24
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
