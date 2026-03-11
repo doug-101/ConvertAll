@@ -1,6 +1,6 @@
 // unit_controller.dart, the main unit model file.
 // ConvertAll, a versatile unit conversion program.
-// Copyright (c) 2024, Douglas W. Bell.
+// Copyright (c) 2026, Douglas W. Bell.
 // Free software, GPL v2 or later.
 
 // foundation.dart includes [ChangeNotifier].
