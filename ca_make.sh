@@ -2,7 +2,7 @@
 
 # ca_make.sh, a Linux build/install tool for ConvertAll.
 # ConvertAll, a versatile unit conversion program.
-# Copyright (c) 2025, Douglas W. Bell.
+# Copyright (c) 2026, Douglas W. Bell.
 # Free software, GPL v2 or later.
 
 depends_error () {
@@ -74,7 +74,7 @@ case "$1" in
         echo "Downloading Flutter..."
         flutter_site="https://storage.googleapis.com"
         flutter_path="/flutter_infra_release/releases/stable/linux/"
-        flutter_file="flutter_linux_3.32.4-stable.tar.xz"
+        flutter_file="flutter_linux_3.41.4-stable.tar.xz"
         curl -O $flutter_site$flutter_path$flutter_file \
             || misc_error "Error:  Could not download Flutter"
         echo
