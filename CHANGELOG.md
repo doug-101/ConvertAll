@@ -1,6 +1,6 @@
 
 ---
-## March 13, 2026 - Release 1.0.3
+## March 11, 2026 - Release 1.0.3
 
 ### Updates:
 - Added physics units: elementary charge, Planck length, Planck mass, Planck
@@ -12,6 +12,8 @@
 ### Bug Fixes:
 - Updated an external library in order to fix an incorrect non-linear
   temperature conversion at zero degrees.
+- Remove the quit command from the web version since it is not supported
+  by browsers.
 
 ---
 ## June 27, 2025 - Release 1.0.2
